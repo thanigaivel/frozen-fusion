@@ -16,13 +16,13 @@ export function GlassCard({ headline, body, children, index = 0, className }: Gl
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50, filter: "blur(10px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: false, margin: "-10%" }}
       transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
       whileHover={{ y: -10 }}
       className={cn(
-        "glass-card glass-card-hover rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 relative overflow-hidden flex flex-col gap-3 md:gap-5",
+        "glass-card-light md:glass-card glass-card-hover rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 relative overflow-hidden flex flex-col gap-3 md:gap-5",
         index !== undefined && index >= 0 ? (isEven ? "md:self-start md:mr-auto w-full md:w-[52%]" : "md:self-end md:ml-auto w-full md:w-[52%]") : "w-full",
         className
       )}

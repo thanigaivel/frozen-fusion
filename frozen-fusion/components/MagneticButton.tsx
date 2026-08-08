@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -16,8 +16,14 @@ interface MagneticButtonProps {
 export function MagneticButton({ children, className, variant = "primary", onClick, disabled, type = "button" }: MagneticButtonProps) {
   const ref = useRef<HTMLButtonElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    setIsTouchDevice(window.matchMedia("(pointer: coarse)").matches);
+  }, []);
 
   const handleMouse = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (isTouchDevice) return;
     const { clientX, clientY } = e;
     const { height, width, left, top } = ref.current!.getBoundingClientRect();
     const middleX = clientX - (left + width / 2);
@@ -43,8 +49,8 @@ export function MagneticButton({ children, className, variant = "primary", onCli
       onClick={onClick}
       onMouseMove={handleMouse}
       onMouseLeave={reset}
-      animate={{ x: position.x, y: position.y }}
-      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+      animate={isTouchDevice ? undefined : { x: position.x, y: position.y }}
+      transition={isTouchDevice ? undefined : { type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
       className={cn(
         "relative rounded-full px-8 py-4 font-bold text-lg overflow-hidden group transition-all duration-300",
         variants[variant],

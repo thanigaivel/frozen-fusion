@@ -7,41 +7,44 @@ interface CanvasSequenceProps {
   scrollProgress: MotionValue<number>;
 }
 
-const TOTAL_FRAMES = 240;
-// Lerp factor: how quickly the displayed frame chases the target (0–1).
-// Lower = smoother but laggier; higher = snappier but more abrupt.
+// Load every 4th frame to reduce payload from ~19 MB to ~5 MB
+const TOTAL_ORIGINAL_FRAMES = 240;
+const FRAME_STEP = 4;
+const TOTAL_FRAMES = Math.ceil(TOTAL_ORIGINAL_FRAMES / FRAME_STEP); // 60
 const LERP_FACTOR = 0.12;
 
 export function CanvasSequence({ scrollProgress }: CanvasSequenceProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const [loadedCount, setLoadedCount] = useState(0);
+  const [firstFrameReady, setFirstFrameReady] = useState(false);
 
-  // ── 1. Spring-smoothed scroll progress ──────────────────────────────────
-  // The spring adds momentum so the animation decelerates naturally when the
-  // user stops scrolling, instead of cutting off abruptly.
+  // Spring-smoothed scroll progress
   const smoothProgress = useSpring(scrollProgress, {
-    stiffness: 60,   // lower = softer spring (slower to reach target)
-    damping: 20,     // lower = more oscillation; higher = overdamped
-    mass: 0.4,       // lower = lighter feel, reacts faster
+    stiffness: 60,
+    damping: 20,
+    mass: 0.4,
     restDelta: 0.0001,
   });
 
-  // Map spring value (0→1) to frame index (0→239)
+  // Map spring value (0→1) to frame index (0→59)
   const targetFrameMotion = useTransform(smoothProgress, [0, 1], [0, TOTAL_FRAMES - 1]);
 
-  // ── 2. Preload all frames ────────────────────────────────────────────────
+  // Preload frames (every 4th original frame)
   useEffect(() => {
     const arr: HTMLImageElement[] = new Array(TOTAL_FRAMES);
     let count = 0;
 
     for (let i = 0; i < TOTAL_FRAMES; i++) {
       const img = new Image();
-      const frameNum = (i + 1).toString().padStart(3, "0");
-      img.src = `/fusion-icecream/ezgif-frame-${frameNum}.jpg`;
-      img.decoding = "async"; // non-blocking decode
+      // Map to original frame number: 1, 5, 9, 13, ...
+      const originalFrameNum = (i * FRAME_STEP + 1).toString().padStart(3, "0");
+      img.src = `/fusion-icecream/ezgif-frame-${originalFrameNum}.jpg`;
+      img.decoding = "async";
       img.onload = () => {
         count++;
+        // Mark first frame ready as soon as frame 0 loads
+        if (i === 0) setFirstFrameReady(true);
         setLoadedCount(count);
       };
       arr[i] = img;
@@ -49,17 +52,16 @@ export function CanvasSequence({ scrollProgress }: CanvasSequenceProps) {
     imagesRef.current = arr;
   }, []);
 
-  // ── 3. RAF draw loop with lerp ───────────────────────────────────────────
-  // We keep a mutable ref for the *displayed* frame index and lerp it toward
-  // the spring-smoothed *target* frame on every animation frame. This adds a
-  // second layer of smoothing that makes individual frame transitions feel
-  // physically continuous rather than discrete jumps.
+  // RAF draw loop with idle detection — pauses when not scrolling
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     let displayedFrame = 0;
+    let lastDrawnFrame = -1;
     let rafId: number;
+    let idleTimeout: ReturnType<typeof setTimeout> | null = null;
+    let isRunning = true;
 
     const draw = (frameIdx: number) => {
       const ctx = canvas.getContext("2d");
@@ -67,14 +69,12 @@ export function CanvasSequence({ scrollProgress }: CanvasSequenceProps) {
       const img = imagesRef.current[frameIdx];
       if (!img?.complete || img.naturalWidth === 0) return;
 
-      // Cover-fit: scale image to fill canvas, cropping edges (like object-fit: cover)
-      // This ensures no black bars on any screen size, especially portrait mobile.
+      // Cover-fit: scale image to fill canvas (like object-fit: cover)
       const hRatio = canvas.width / img.naturalWidth;
       const vRatio = canvas.height / img.naturalHeight;
       const ratio = Math.max(hRatio, vRatio);
       const scaledW = img.naturalWidth * ratio;
       const scaledH = img.naturalHeight * ratio;
-      // Center the cropped image
       const dx = (canvas.width - scaledW) / 2;
       const dy = (canvas.height - scaledH) / 2;
 
@@ -87,24 +87,61 @@ export function CanvasSequence({ scrollProgress }: CanvasSequenceProps) {
     };
 
     const loop = () => {
-      // Get spring-smoothed target from Framer Motion
+      if (!isRunning) return;
+
       const target = Math.max(0, Math.min(TOTAL_FRAMES - 1, targetFrameMotion.get()));
-
-      // Lerp displayed frame toward target
       displayedFrame += (target - displayedFrame) * LERP_FACTOR;
-
       const frameIdx = Math.round(displayedFrame);
-      draw(frameIdx);
+
+      // Only redraw if frame actually changed
+      if (frameIdx !== lastDrawnFrame) {
+        draw(frameIdx);
+        lastDrawnFrame = frameIdx;
+      }
+
+      // Check if we're close enough to target to pause
+      const diff = Math.abs(target - displayedFrame);
+      if (diff < 0.01) {
+        // Near idle — schedule pause
+        if (!idleTimeout) {
+          idleTimeout = setTimeout(() => {
+            isRunning = false;
+          }, 200);
+        }
+      } else {
+        // Still moving — clear any idle timeout
+        if (idleTimeout) {
+          clearTimeout(idleTimeout);
+          idleTimeout = null;
+        }
+      }
 
       rafId = requestAnimationFrame(loop);
     };
 
     rafId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(rafId);
+
+    // Resume loop when scroll value changes
+    const unsubscribe = targetFrameMotion.on("change", () => {
+      if (idleTimeout) {
+        clearTimeout(idleTimeout);
+        idleTimeout = null;
+      }
+      if (!isRunning) {
+        isRunning = true;
+        rafId = requestAnimationFrame(loop);
+      }
+    });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      if (idleTimeout) clearTimeout(idleTimeout);
+      unsubscribe();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── 4. Responsive canvas resize ─────────────────────────────────────────
+  // Responsive canvas resize
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -123,12 +160,19 @@ export function CanvasSequence({ scrollProgress }: CanvasSequenceProps) {
   const pct = Math.round((loadedCount / TOTAL_FRAMES) * 100);
 
   return (
-    <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#060606]">
-      <canvas ref={canvasRef} className="h-full w-full" />
+    <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#060606]" style={{ willChange: "transform" }}>
+      <canvas
+        ref={canvasRef}
+        className="h-full w-full transition-opacity duration-500"
+        style={{ opacity: firstFrameReady ? 1 : 0 }}
+      />
 
-      {/* Loading overlay with progress bar */}
+      {/* Loading overlay — visible until all frames loaded */}
       {isLoading && (
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 bg-[#060606]">
+        <div
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 bg-[#060606] transition-opacity duration-700"
+          style={{ opacity: firstFrameReady ? 0 : 1, pointerEvents: firstFrameReady ? "none" : "auto" }}
+        >
           <p className="text-sm font-medium uppercase tracking-[0.3em] text-white/40">
             Loading Cinematic Experience
           </p>

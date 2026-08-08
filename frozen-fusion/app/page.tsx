@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { useScroll, motion } from "framer-motion";
+import { useScroll, useTransform, motion } from "framer-motion";
 import Link from "next/link";
 import { CanvasSequence } from "@/components/CanvasSequence";
 import { Navbar } from "@/components/Navbar";
@@ -48,10 +48,10 @@ export default function Home() {
       {/* Fixed Navbar */}
       <Navbar />
 
-      {/* Hero Intro Overlay - Disappears as you scroll */}
+      {/* Hero Intro Overlay - Fades out as you scroll */}
       <motion.div 
         className="fixed inset-0 z-10 flex flex-col items-center justify-center pointer-events-none"
-        style={{ opacity: useScroll().scrollYProgress }} // Simplistic fade
+        style={{ opacity: useTransform(scrollYProgress, [0, 0.15], [1, 0]) }}
       >
         <div className="text-center mt-[-10vh]">
           <h1 className="text-5xl md:text-8xl lg:text-[120px] font-bungee tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50 drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">

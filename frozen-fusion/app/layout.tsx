@@ -1,16 +1,13 @@
-import { Bungee, Fredoka, Righteous, Poppins, Montserrat, Inter } from "next/font/google";
+import { Bungee, Poppins, Righteous } from "next/font/google";
 
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { CinematicBackground } from "@/components/CinematicBackground";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const poppins = Poppins({ weight: ["300", "400", "500", "600", "700"], subsets: ["latin"], variable: "--font-poppins" });
-const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat" });
-const bungee = Bungee({ weight: "400", subsets: ["latin"], variable: "--font-bungee" });
-const fredoka = Fredoka({ subsets: ["latin"], variable: "--font-fredoka" });
-const righteous = Righteous({ weight: "400", subsets: ["latin"], variable: "--font-righteous" });
+const poppins = Poppins({ weight: ["300", "400", "500", "600", "700"], subsets: ["latin"], variable: "--font-poppins", display: "swap" });
+const bungee = Bungee({ weight: "400", subsets: ["latin"], variable: "--font-bungee", display: "swap" });
+const righteous = Righteous({ weight: "400", subsets: ["latin"], variable: "--font-righteous", display: "swap" });
 
 export const metadata = {
   title: "Frozen Fusion | Tuticorin's First Premium Dessert Brand",
@@ -28,11 +25,8 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn(
         "antialiased dark",
-        inter.variable,
         poppins.variable,
-        montserrat.variable,
         bungee.variable,
-        fredoka.variable,
         righteous.variable
       )}
     >
