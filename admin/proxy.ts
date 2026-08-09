@@ -29,6 +29,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Allow public read access to the products API for the frontend
+  if (pathname === "/api/products" && request.method === "GET") {
+    return NextResponse.next();
+  }
+
   // Check for the admin token cookie
   const token = request.cookies.get("admin_token")?.value;
 

@@ -8,9 +8,9 @@ export function Navbar() {
         <Image
           src="/logo.png"
           alt="Frozen Fusion"
-          width={240}
-          height={90}
-          className="h-20 w-auto object-contain"
+          width={300}
+          height={110}
+          className="h-24 md:h-28 w-auto object-contain"
           priority
           fetchPriority="high"
         />

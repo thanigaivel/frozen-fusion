@@ -227,14 +227,14 @@ function CategorySection({
         initial={{ opacity: 0, x: -30 }}
         animate={headerInView ? { opacity: 1, x: 0 } : {}}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="flex items-center justify-between mb-6 pb-4 border-b border-white/10"
+        className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 pb-4 border-b border-white/10"
       >
-        <div className="flex items-center gap-3">
-          <span className="text-3xl">{category.icon}</span>
-          <div>
-            <div className="flex items-center gap-3">
+        <div className="flex items-start gap-3 md:gap-4 flex-1 min-w-0">
+          <span className="text-3xl md:text-4xl shrink-0 pt-1">{category.icon}</span>
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-2 mb-1.5">
               <h2
-                className="text-2xl md:text-3xl font-bold font-inter tracking-tight"
+                className="text-2xl md:text-3xl font-bold font-inter tracking-tight leading-tight"
                 style={{
                   background: `linear-gradient(135deg, #ffffff 0%, ${category.headerColor} 100%)`,
                   WebkitBackgroundClip: "text",
@@ -245,7 +245,7 @@ function CategorySection({
                 {category.name}
               </h2>
               <span
-                className="px-2.5 py-0.5 rounded-full text-xs font-semibold font-inter"
+                className="px-2.5 py-0.5 rounded-full text-[10px] md:text-xs font-semibold font-inter whitespace-nowrap shrink-0"
                 style={{
                   background: `${category.headerColor}20`,
                   border: `1px solid ${category.headerColor}40`,
@@ -255,25 +255,25 @@ function CategorySection({
                 {category.products.length} flavours
               </span>
             </div>
-            <p className="text-white/40 font-inter text-xs mt-0.5">{category.description}</p>
+            <p className="text-white/40 font-inter text-xs md:text-sm mt-0.5 leading-relaxed">{category.description}</p>
           </div>
         </div>
 
         {/* Scroll controls */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 self-end shrink-0">
           <button
             onClick={() => scroll("left")}
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-white/60 hover:text-white transition-all duration-200 hover:scale-105"
+            className="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center text-white/60 hover:text-white transition-all duration-200 hover:scale-105"
             style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}
           >
-            <ChevronLeft />
+            <ChevronLeft size={20} />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-white/60 hover:text-white transition-all duration-200 hover:scale-105"
+            className="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center text-white/60 hover:text-white transition-all duration-200 hover:scale-105"
             style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}
           >
-            <ChevronRight />
+            <ChevronRight size={20} />
           </button>
         </div>
       </motion.div>
@@ -346,7 +346,7 @@ function FlavorModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.88, y: 24 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="relative w-full max-w-3xl rounded-3xl overflow-hidden"
+        className="relative w-full max-w-4xl rounded-3xl overflow-hidden"
         style={{
           background: "rgba(15,15,20,0.95)",
           border: `1px solid ${product.color}30`,
@@ -363,16 +363,16 @@ function FlavorModal({
           <XIcon />
         </button>
 
-        <div className="flex flex-col md:flex-row">
+        <div className="flex flex-col md:flex-row md:min-h-[550px]">
           {/* Image */}
-          <div className="relative md:w-72 h-56 md:h-auto flex-shrink-0 overflow-hidden">
+          <div className="relative md:w-1/2 h-80 md:h-auto flex-shrink-0 overflow-hidden">
             <Image
               src={product.image}
               alt={product.name}
               fill
               unoptimized
               className="object-cover"
-              sizes="288px"
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
             <div
               className="absolute inset-0"
@@ -605,6 +605,9 @@ export default function ProductsPage() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [toast, setToast] = useState<{ message: string; visible: boolean } | null>(null);
 
+  const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+
   // Load favorites from localStorage
   useEffect(() => {
     try {
@@ -613,6 +616,33 @@ export default function ProductsPage() {
     } catch (e) {
       console.error("Failed to load favorites", e);
     }
+  }, []);
+
+  // Fetch dynamic products from Admin API
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        const url = process.env.NEXT_PUBLIC_ADMIN_URL 
+          ? `${process.env.NEXT_PUBLIC_ADMIN_URL}/api/products` 
+          : "http://localhost:3001/api/products";
+        const res = await fetch(url);
+        const json = await res.json();
+        if (json.success && json.data) {
+          // ensure _id is mapped to id if coming from mongo
+          const mapped = json.data.map((p: any) => ({
+            ...p,
+            id: p._id || p.id,
+          }));
+          setFetchedProducts(mapped);
+        }
+      } catch (err) {
+        console.error("Failed to fetch dynamic products, using fallback data:", err);
+        setFetchedProducts(ALL_PRODUCTS);
+      } finally {
+        setLoadingProducts(false);
+      }
+    }
+    loadProducts();
   }, []);
 
   const toggleFavorite = useCallback((productId: string, productName?: string) => {
@@ -637,29 +667,34 @@ export default function ProductsPage() {
   }, []);
 
   // Compute visible categories based on filter + search
-  const filteredCategories = CATEGORIES.map((cat) => ({
-    ...cat,
-    products: cat.products.filter((p) => {
-      const matchesFilter =
-        activeFilter === "All" ||
-        (activeFilter === "Favourites"
-          ? favorites.includes(p.id)
-          : p.badge === activeFilter || p.tags.some((t) => t.toLowerCase() === activeFilter.toLowerCase()));
-      const matchesSearch =
-        search === "" ||
-        p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.description.toLowerCase().includes(search.toLowerCase()) ||
-        p.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()));
-      return matchesFilter && matchesSearch;
-    }),
-  })).filter((cat) =>
+  const filteredCategories = CATEGORIES.map((cat) => {
+    // Override static products with fetched ones
+    const dynamicCategoryProducts = fetchedProducts.filter((p) => p.categoryId === cat.id && p.visible !== false);
+    
+    return {
+      ...cat,
+      products: dynamicCategoryProducts.filter((p) => {
+        const matchesFilter =
+          activeFilter === "All" ||
+          (activeFilter === "Favourites"
+            ? favorites.includes(p.id)
+            : p.badge === activeFilter || (p.tags && p.tags.some((t: string) => t.toLowerCase() === activeFilter.toLowerCase())));
+        const matchesSearch =
+          search === "" ||
+          p.name.toLowerCase().includes(search.toLowerCase()) ||
+          (p.description && p.description.toLowerCase().includes(search.toLowerCase())) ||
+          (p.tags && p.tags.some((t: string) => t.toLowerCase().includes(search.toLowerCase())));
+        return matchesFilter && matchesSearch;
+      }),
+    };
+  }).filter((cat) =>
     (activeCategory === "all" || cat.id === activeCategory) &&
     cat.products.length > 0
   );
 
   const relatedProducts = modalProduct
-    ? ALL_PRODUCTS.filter(
-        (p) => p.categoryId === modalProduct.categoryId && p.id !== modalProduct.id
+    ? fetchedProducts.filter(
+        (p) => p.categoryId === modalProduct.categoryId && p.id !== modalProduct.id && p.visible !== false
       ).slice(0, 6)
     : [];
 

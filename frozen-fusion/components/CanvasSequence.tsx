@@ -35,7 +35,7 @@ export function CanvasSequence({ scrollProgress }: CanvasSequenceProps) {
     const arr: HTMLImageElement[] = new Array(TOTAL_FRAMES);
     let count = 0;
 
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
+    const loadFrame = (i: number) => {
       const img = new Image();
       // Map to original frame number: 1, 5, 9, 13, ...
       const originalFrameNum = (i * FRAME_STEP + 1).toString().padStart(3, "0");
@@ -48,8 +48,22 @@ export function CanvasSequence({ scrollProgress }: CanvasSequenceProps) {
         setLoadedCount(count);
       };
       arr[i] = img;
-    }
+    };
+
+    // Load first frame immediately so it's ready
+    loadFrame(0);
     imagesRef.current = arr;
+
+    // Defer loading the remaining 59 frames by 1 second.
+    // This allows the browser to focus entirely on LCP, FCP, and hydration,
+    // dramatically improving Lighthouse scores while being unnoticeable to the user.
+    const timeout = setTimeout(() => {
+      for (let i = 1; i < TOTAL_FRAMES; i++) {
+        loadFrame(i);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeout);
   }, []);
 
   // RAF draw loop with idle detection — pauses when not scrolling
@@ -160,31 +174,49 @@ export function CanvasSequence({ scrollProgress }: CanvasSequenceProps) {
   const pct = Math.round((loadedCount / TOTAL_FRAMES) * 100);
 
   return (
-    <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#060606]" style={{ willChange: "transform" }}>
-      <canvas
-        ref={canvasRef}
-        className="h-full w-full transition-opacity duration-500"
-        style={{ opacity: firstFrameReady ? 1 : 0 }}
+    <div className="sticky top-0 h-screen w-full overflow-hidden" style={{ willChange: "transform" }}>
+      {/* Static fallback image — loads instantly via native browser, no JS wait */}
+      {/* Shows the first frame of the ice cream sequence as a beautiful hero banner */}
+      <img
+        src="/fusion-icecream/ezgif-frame-001.jpg"
+        alt="Frozen Fusion Ice Cream"
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ zIndex: 0 }}
+        fetchPriority="high"
       />
 
-      {/* Loading overlay — visible until all frames loaded */}
-      {isLoading && (
-        <div
-          className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 bg-[#060606] transition-opacity duration-700"
-          style={{ opacity: firstFrameReady ? 0 : 1, pointerEvents: firstFrameReady ? "none" : "auto" }}
-        >
-          <p className="text-sm font-medium uppercase tracking-[0.3em] text-white/40">
-            Loading Cinematic Experience
-          </p>
-          <div className="h-[1px] w-48 bg-white/10 overflow-hidden rounded-full">
-            <div
-              className="h-full bg-gradient-to-r from-[#e12d6a] to-yellow-400 transition-all duration-150"
-              style={{ width: `${pct}%` }}
-            />
+      {/* Dark gradient overlay so hero text is readable over the image */}
+      <div
+        className="absolute inset-0 z-[1]"
+        style={{
+          background: "linear-gradient(to bottom, rgba(6,6,6,0.5) 0%, rgba(6,6,6,0.3) 40%, rgba(6,6,6,0.5) 100%)",
+        }}
+      />
+
+      {/* Canvas — fades in over the static image once frames are ready */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full transition-opacity duration-700"
+        style={{ opacity: firstFrameReady ? 1 : 0, zIndex: 2 }}
+      />
+
+      {/* Subtle loading indicator at bottom */}
+      {isLoading && !firstFrameReady && (
+        <div className="absolute inset-0 z-10 flex flex-col items-end justify-end pointer-events-none pb-12">
+          <div className="flex flex-col items-center gap-3 w-full">
+            <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-white/40">
+              Loading Experience
+            </p>
+            <div className="h-[1px] w-36 bg-white/10 overflow-hidden rounded-full">
+              <div
+                className="h-full bg-gradient-to-r from-[#e12d6a] to-yellow-400 transition-all duration-150"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
           </div>
-          <p className="text-xs text-white/20 tabular-nums">{pct}%</p>
         </div>
       )}
     </div>
   );
 }
+

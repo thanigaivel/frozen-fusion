@@ -50,7 +50,7 @@ export default function Home() {
 
       {/* Hero Intro Overlay - Fades out as you scroll */}
       <motion.div 
-        className="fixed inset-0 z-10 flex flex-col items-center justify-center pointer-events-none"
+        className="fixed inset-0 z-30 flex flex-col items-center justify-center pointer-events-none"
         style={{ opacity: useTransform(scrollYProgress, [0, 0.15], [1, 0]) }}
       >
         <div className="text-center mt-[-10vh]">

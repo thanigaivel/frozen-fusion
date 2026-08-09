@@ -52,6 +52,7 @@ const EMPTY_FORM = {
   badge: "" as Badge | "",
   rating: 4.5,
   image: "",
+  imageFile: null as File | null,
   color: "#60A5FA",
   tags: "",
   visible: true,
@@ -122,6 +123,7 @@ export default function AdminProductsPage() {
       badge: p.badge || "",
       rating: p.rating,
       image: p.image,
+      imageFile: null,
       color: p.color,
       tags: p.tags.join(", "),
       visible: p.visible,
@@ -136,31 +138,50 @@ export default function AdminProductsPage() {
     setSubmitting(true);
     try {
       const cat = CATEGORIES.find((c) => c.id === form.categoryId)!;
-      const payload = {
-        name: form.name.trim(),
-        categoryId: form.categoryId,
-        categoryName: cat.name,
-        description: form.description.trim(),
-        badge: form.badge || null,
-        rating: Number(form.rating),
-        image: form.image.trim(),
-        color: form.color,
-        tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
-        visible: form.visible,
-      };
+      
+      const formData = new FormData();
+      formData.append("name", form.name.trim());
+      formData.append("categoryId", form.categoryId);
+      formData.append("categoryName", cat.name);
+      formData.append("description", form.description.trim());
+      if (form.badge) formData.append("badge", form.badge);
+      formData.append("rating", form.rating.toString());
+      formData.append("color", form.color);
+      formData.append("tags", JSON.stringify(form.tags.split(",").map((t) => t.trim()).filter(Boolean)));
+      formData.append("visible", String(form.visible));
+      
+      if (form.imageFile) {
+        formData.append("image", form.imageFile);
+      }
+      if (form.image) {
+        formData.append("imageUrl", form.image);
+      }
 
       if (editProduct) {
+        // Edit currently only updates the database, not files, but we can send JSON for simple edits if imageFile is null.
+        // For simplicity, we just use PATCH for metadata edits. If they want to upload a new image on edit, 
+        // we would need to update the PATCH endpoint to handle FormData.
+        // Here we just use JSON for edits since we didn't upgrade the PATCH endpoint yet.
         await fetch(`/api/products/${editProduct._id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({
+            name: form.name.trim(),
+            categoryId: form.categoryId,
+            categoryName: cat.name,
+            description: form.description.trim(),
+            badge: form.badge || null,
+            rating: Number(form.rating),
+            color: form.color,
+            tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+            visible: form.visible,
+          }),
         });
         showToast(`"${form.name}" updated successfully.`);
       } else {
         await fetch("/api/products", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: formData, // Send as FormData
         });
         showToast(`"${form.name}" added successfully.`);
       }
@@ -466,18 +487,24 @@ export default function AdminProductsPage() {
                 />
               </div>
 
-              {/* Image URL */}
+              {/* Image Upload */}
               <div>
                 <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wider">
-                  Image URL
+                  Product Image
                 </label>
                 <input
-                  type="url"
-                  value={form.image}
-                  onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
-                  placeholder="https://…"
-                  className="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-pink-500 transition-colors placeholder-gray-600"
+                  type="file"
+                  accept="image/jpeg, image/png, image/webp"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      setForm((f) => ({ ...f, imageFile: e.target.files![0] }));
+                    }
+                  }}
+                  className="w-full bg-gray-800 border border-gray-700 text-white rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-pink-500 transition-colors file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-pink-500/10 file:text-pink-400 hover:file:bg-pink-500/20"
                 />
+                {editProduct && form.image && (
+                  <p className="text-xs text-gray-500 mt-2">Current: {form.image}</p>
+                )}
               </div>
 
               {/* Badge + Rating */}
