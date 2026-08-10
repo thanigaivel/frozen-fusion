@@ -12,7 +12,7 @@ import { MagneticButton } from "@/components/MagneticButton";
 const gatewaySections = [
   {
     headline: "Taste The Fusion",
-    body: "Experience the finest frozen desserts, crafted with passion and pure ingredients. A luxury dessert lounge awaits you.",
+    body: "Experience premium ice creams, popsicles and frozen delights, crafted with passion and quality ingredients.",
     link: "/products",
     cta: "Explore Our Menu",
   },
@@ -58,7 +58,7 @@ export default function Home() {
             FROZEN FUSION
           </h1>
           <p className="mt-4 text-xl md:text-3xl font-poppins font-light text-neon-cyan tracking-[0.2em] uppercase">
-            Crafting the Finest Frozen Experiences
+            One Destination. Endless premium Icecream
           </p>
         </div>
       </motion.div>

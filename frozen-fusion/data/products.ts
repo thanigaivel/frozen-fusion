@@ -147,7 +147,7 @@ function p(
 const RAW_CATEGORIES = [
   {
     id: "milk-popsicles",
-    name: "Premium Milk Popsicles",
+    name: "Premium Popsicle",
     icon: "🥛",
     description: "Rich, creamy milk-based popsicles in decadent flavours.",
     headerColor: "#60A5FA",
@@ -164,30 +164,10 @@ const RAW_CATEGORIES = [
       p("milk-popsicles", "Badam Milk",      "Almond-infused warm spiced milk, now frozen to perfection.", "kulfi", null,         4.7, ["nutty","premium"]),
     ],
   },
-  {
-    id: "fruit-popsicles",
-    name: "Fruit Popsicles",
-    icon: "🍓",
-    description: "Refreshing real-fruit popsicles bursting with natural flavour.",
-    headerColor: "#FB923C",
-    products: [
-      p("fruit-popsicles", "Mango",       "Sunshine Alphonso mango, zero sugar added.",              "mango",    "Best Seller", 4.9, ["fruity","popular"]),
-      p("fruit-popsicles", "Orange",      "Freshly squeezed Valencia orange with a citrus zing.",     "fruit",    null,          4.5, ["citrus","refreshing"]),
-      p("fruit-popsicles", "Strawberry",  "Sun-ripened strawberries burst with every lick.",          "strawberry","Popular",    4.7, ["fruity","sweet"]),
-      p("fruit-popsicles", "Watermelon",  "Juicy seedless watermelon — summer in a stick.",           "fruit",    "Seasonal",   4.6, ["light","refreshing"]),
-      p("fruit-popsicles", "Pineapple",   "Tangy tropical pineapple with a sun-kissed finish.",       "fruit",    null,          4.4, ["tropical","tangy"]),
-      p("fruit-popsicles", "Lemon",       "Zingy lemon with a touch of mint — sharply refreshing.",   "fruit",    null,          4.3, ["citrus","tangy"]),
-      p("fruit-popsicles", "Kiwi",        "New Zealand kiwi — sweet, tangy, and brilliantly green.",  "fruit",    "New",         4.5, ["exotic","fruity"]),
-      p("fruit-popsicles", "Guava",       "Classic pink guava with a lightly spiced edge.",            "fruit",    null,          4.4, ["tropical","fruity"]),
-      p("fruit-popsicles", "Lychee",      "Delicate lychee blossom with floral sweetness.",           "fruit",    "New",         4.6, ["floral","exotic"]),
-      p("fruit-popsicles", "Mixed Fruit", "A medley of six seasonal fruits in one popsicle.",         "fruit",    "Best Seller", 4.7, ["variety","fruity"]),
-      p("fruit-popsicles", "Grape",       "Concord grape with a deep berry richness.",                 "fruit",    null,          4.4, ["bold","fruity"]),
-      p("fruit-popsicles", "Apple",       "Crisp Shimla apple with a hint of cinnamon spice.",        "fruit",    null,          4.3, ["mild","classic"]),
-    ],
-  },
+
   {
     id: "kulfi",
-    name: "Kulfi Collection",
+    name: "Kulfi Varieties",
     icon: "🍨",
     description: "Authentic Indian kulfi with premium ingredients and exotic spices.",
     headerColor: "#D4AF37",
@@ -204,7 +184,7 @@ const RAW_CATEGORIES = [
   },
   {
     id: "fruit-shaped",
-    name: "Fruit-Shaped Ice Creams",
+    name: "Fruit Shaped Ice Cream",
     icon: "🍉",
     description: "Whimsical fruit-shaped ice creams that delight the eyes and the palate.",
     headerColor: "#4ADE80",
@@ -221,7 +201,7 @@ const RAW_CATEGORIES = [
   },
   {
     id: "scoops",
-    name: "Premium Scoops",
+    name: "Classic Ice Creams",
     icon: "🍦",
     description: "Dense, rich hand-crafted scoops in 15 premium flavours.",
     headerColor: "#F472B6",
@@ -245,7 +225,7 @@ const RAW_CATEGORIES = [
   },
   {
     id: "sandwiches",
-    name: "Ice Cream Sandwiches",
+    name: "Ice Cream Sandwich & Slices",
     icon: "🍪",
     description: "Creamy ice cream sandwiched between premium wafers and cookies.",
     headerColor: "#A78BFA",
@@ -279,7 +259,7 @@ const RAW_CATEGORIES = [
   },
   {
     id: "fusion-drinks",
-    name: "Signature Fusion Drinks",
+    name: "Fusion Drinks",
     icon: "🍹",
     description: "Innovative beverage creations that blur the line between drink and dessert.",
     headerColor: "#34D399",
@@ -298,7 +278,7 @@ const RAW_CATEGORIES = [
   },
   {
     id: "sundaes",
-    name: "Sundaes",
+    name: "Desserts",
     icon: "🍧",
     description: "Layered sundaes piled high with premium toppings and luxury sauces.",
     headerColor: "#F97316",
@@ -317,7 +297,7 @@ const RAW_CATEGORIES = [
   },
   {
     id: "seasonal",
-    name: "Seasonal Specials",
+    name: "Premium Ice Cream",
     icon: "❄️",
     description: "Limited-time masterpieces crafted for each season and festival.",
     headerColor: "#A78BFA",
@@ -334,7 +314,7 @@ const RAW_CATEGORIES = [
   },
   {
     id: "bulk",
-    name: "4L Bulk Ice Cream",
+    name: "Signature Ice Cream",
     icon: "🍨",
     description: "Premium family-pack tubs — perfect for gatherings and celebrations.",
     headerColor: "#60A5FA",

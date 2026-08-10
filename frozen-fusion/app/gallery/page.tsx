@@ -77,7 +77,15 @@ export default function GalleryPage() {
   useEffect(() => {
     async function fetchImages() {
       try {
-        const res = await fetch("http://localhost:3001/api/gallery");
+        const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
+        if (!adminUrl && process.env.NODE_ENV === "production") {
+          console.warn("NEXT_PUBLIC_ADMIN_URL is not set. Using fallback gallery data.");
+          setImages(DEFAULT_GALLERY);
+          setLoading(false);
+          return;
+        }
+        const url = adminUrl ? `${adminUrl}/api/gallery` : "http://localhost:3001/api/gallery";
+        const res = await fetch(url);
         if (res.ok) {
           const data = await res.json();
           if (data.images && data.images.length > 0) {

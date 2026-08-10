@@ -12,6 +12,24 @@ const righteous = Righteous({ weight: "400", subsets: ["latin"], variable: "--fo
 export const metadata = {
   title: "Frozen Fusion | Tuticorin's First Premium Dessert Brand",
   description: "Crafting the Finest Frozen Experiences. A luxury futuristic dessert lounge.",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
+  openGraph: {
+    title: "Frozen Fusion | Premium Dessert Brand",
+    description: "Crafting the Finest Frozen Experiences. A luxury futuristic dessert lounge in Tuticorin.",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Frozen Fusion Logo",
+      },
+    ],
+    type: "website",
+  },
 };
 
 export default function RootLayout({

@@ -62,7 +62,12 @@ export default function EventsPage() {
     setStatus({ type: null, message: "" });
 
     try {
-      const res = await fetch("http://localhost:3001/api/events", {
+      const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
+      if (!adminUrl && process.env.NODE_ENV === "production") {
+        throw new Error("NEXT_PUBLIC_ADMIN_URL is not set");
+      }
+      const url = adminUrl ? `${adminUrl}/api/events` : "http://localhost:3001/api/events";
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

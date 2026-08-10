@@ -22,17 +22,16 @@ interface Product {
 
 /* ─── Static category list (mirrors frontend data) ──────────── */
 const CATEGORIES = [
-  { id: "milk-popsicles",  name: "Premium Milk Popsicles",   icon: "🥛" },
-  { id: "fruit-popsicles", name: "Fruit Popsicles",           icon: "🍓" },
-  { id: "kulfi",           name: "Kulfi Collection",           icon: "🍨" },
-  { id: "fruit-shaped",    name: "Fruit-Shaped Ice Creams",   icon: "🍉" },
-  { id: "scoops",          name: "Premium Scoops",             icon: "🍦" },
-  { id: "sandwiches",      name: "Ice Cream Sandwiches",       icon: "🍪" },
+  { id: "milk-popsicles",  name: "Premium Popsicle",   icon: "🥛" },
+  { id: "kulfi",           name: "Kulfi Varieties",           icon: "🍨" },
+  { id: "fruit-shaped",    name: "Fruit Shaped Ice Cream",   icon: "🍉" },
+  { id: "scoops",          name: "Classic Ice Creams",             icon: "🍦" },
+  { id: "sandwiches",      name: "Ice Cream Sandwich & Slices",       icon: "🍪" },
   { id: "shakes",          name: "Thick Shakes",               icon: "🥤" },
-  { id: "fusion-drinks",   name: "Signature Fusion Drinks",    icon: "🍹" },
-  { id: "sundaes",         name: "Sundaes",                    icon: "🍧" },
-  { id: "seasonal",        name: "Seasonal Specials",           icon: "❄️" },
-  { id: "bulk",            name: "4L Bulk Ice Cream",           icon: "🍨" },
+  { id: "fusion-drinks",   name: "Fusion Drinks",    icon: "🍹" },
+  { id: "sundaes",         name: "Desserts",                    icon: "🍧" },
+  { id: "seasonal",        name: "Premium Ice Cream",           icon: "❄️" },
+  { id: "bulk",            name: "Signature Ice Cream",           icon: "🍨" },
 ];
 
 const BADGE_OPTIONS: (Badge | "")[] = ["", "Best Seller", "New", "Limited", "Popular"];
@@ -393,7 +392,7 @@ export default function AdminProductsPage() {
                       </button>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center justify-end gap-2 transition-opacity">
                         <button
                           onClick={() => openEdit(product)}
                           className="p-1.5 rounded-lg bg-gray-800 hover:bg-blue-500/20 text-gray-400 hover:text-blue-400 border border-gray-700 hover:border-blue-500/30 transition-all duration-150"
@@ -613,6 +612,18 @@ export default function AdminProductsPage() {
                 >
                   Cancel
                 </button>
+                {editProduct && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowForm(false);
+                      setDeleteConfirm(editProduct._id);
+                    }}
+                    className="px-5 py-2.5 rounded-xl font-semibold text-sm bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all"
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
             </form>
           </div>
