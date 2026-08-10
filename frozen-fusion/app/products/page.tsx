@@ -623,13 +623,6 @@ export default function ProductsPage() {
     async function loadProducts() {
       try {
         const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
-        if (!adminUrl && process.env.NODE_ENV === "production") {
-          // Skip the local fetch in production to prevent ERR_CONNECTION_REFUSED
-          console.warn("NEXT_PUBLIC_ADMIN_URL is not set. Using fallback products data.");
-          setFetchedProducts(ALL_PRODUCTS);
-          setLoadingProducts(false);
-          return;
-        }
         const url = adminUrl ? `${adminUrl}/api/products` : "http://localhost:3001/api/products";
         const res = await fetch(url);
         const json = await res.json();
