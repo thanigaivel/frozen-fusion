@@ -3,6 +3,8 @@
 [build]
   # Command Netlify runs to build the project
   command = "npm run build"
+  # Override UI settings to publish the Next.js standard build output
+  publish = ".next"
 
 # Security & performance headers
 [[headers]]
