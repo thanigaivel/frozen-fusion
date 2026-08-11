@@ -188,7 +188,7 @@ function OutletShowcaseCard({
       onMouseLeave={() => setIsHovered(false)}
       className="group relative rounded-3xl overflow-hidden flex flex-col h-full border border-white/10 hover:border-pink-500/40 transition-all duration-700 shadow-2xl"
       style={{
-        background: "rgba(20,20,28,0.6)",
+        backgroundColor: "rgba(20,20,28,0.6)",
         backdropFilter: "blur(24px)",
       }}
     >
@@ -196,7 +196,7 @@ function OutletShowcaseCard({
       <div
         className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-30"
         style={{
-          background: "linear-gradient(90deg, transparent, #FF2BC2, #3BE8FF, transparent)",
+          backgroundImage: "linear-gradient(90deg, transparent, #FF2BC2, #3BE8FF, transparent)",
           boxShadow: "0 0 15px #FF2BC2, 0 0 30px #3BE8FF",
         }}
       />
@@ -204,7 +204,7 @@ function OutletShowcaseCard({
       {/* Radial neon glow background */}
       <div
         className="absolute inset-0 opacity-10 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none z-0"
-        style={{ background: `radial-gradient(circle at 50% 20%, ${glowColor} 0%, transparent 70%)` }}
+        style={{ backgroundImage: `radial-gradient(circle at 50% 20%, ${glowColor} 0%, transparent 70%)` }}
       />
 
       {/* Slideshow Image Area */}
@@ -343,7 +343,7 @@ function OutletShowcaseCard({
             onClick={() => onOpenZoom(group.items, currentIndex)}
             className="flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xs uppercase tracking-wider font-poppins text-white transition-all duration-300 shadow-[0_0_15px_rgba(255,43,194,0.3)] hover:shadow-[0_0_25px_rgba(255,43,194,0.6)] border border-neon-pink/40 hover:border-neon-pink group-hover:translate-x-0.5"
             style={{
-              background: "linear-gradient(135deg, rgba(255,43,194,0.2), rgba(124,77,255,0.2))",
+              backgroundImage: "linear-gradient(135deg, rgba(255,43,194,0.2), rgba(124,77,255,0.2))",
             }}
           >
             <span>Expand View</span>
@@ -461,15 +461,15 @@ export default function GalleryPage() {
       <div className="pointer-events-none absolute inset-0 overflow-hidden z-0">
         <div
           className="absolute -top-32 left-1/4 w-[600px] h-[600px] rounded-full blur-[150px] animate-orb-1"
-          style={{ background: "radial-gradient(circle, rgba(255,43,194,0.15) 0%, transparent 70%)" }}
+          style={{ backgroundImage: "radial-gradient(circle, rgba(255,43,194,0.15) 0%, transparent 70%)" }}
         />
         <div
           className="absolute top-1/3 right-1/4 w-[550px] h-[550px] rounded-full blur-[140px] animate-orb-2"
-          style={{ background: "radial-gradient(circle, rgba(59,232,255,0.12) 0%, transparent 70%)" }}
+          style={{ backgroundImage: "radial-gradient(circle, rgba(59,232,255,0.12) 0%, transparent 70%)" }}
         />
         <div
           className="absolute bottom-10 left-1/3 w-[500px] h-[500px] rounded-full blur-[160px] animate-orb-3"
-          style={{ background: "radial-gradient(circle, rgba(124,77,255,0.1) 0%, transparent 70%)" }}
+          style={{ backgroundImage: "radial-gradient(circle, rgba(124,77,255,0.1) 0%, transparent 70%)" }}
         />
       </div>
 
@@ -483,14 +483,14 @@ export default function GalleryPage() {
         >
           <div
             className="inline-flex items-center gap-2 px-5 py-2 rounded-full mb-6 text-xs font-bold uppercase tracking-[0.2em] font-poppins shadow-[0_0_20px_rgba(255,43,194,0.3)]"
-            style={{ background: "rgba(255,43,194,0.12)", border: "1px solid rgba(255,43,194,0.35)", color: "#FF2BC2" }}
+            style={{ backgroundColor: "rgba(255,43,194,0.12)", border: "1px solid rgba(255,43,194,0.35)", color: "#FF2BC2" }}
           >
             ✨ Visual Showcase
           </div>
           <h1
             className="text-5xl md:text-7xl lg:text-8xl font-bungee leading-none tracking-tight mb-6"
             style={{
-              background: "linear-gradient(135deg, #ffffff 0%, #FF2BC2 45%, #3BE8FF 100%)",
+              backgroundImage: "linear-gradient(135deg, #ffffff 0%, #FF2BC2 45%, #3BE8FF 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",

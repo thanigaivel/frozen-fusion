@@ -366,6 +366,7 @@ export function Footer() {
             </div>
 
             {/* Center */}
+            {/* Hiding Privacy Policy and Terms of Service for now
             <div className="flex items-center gap-6">
               {["Privacy Policy", "Terms of Service"].map((label) => (
                 <Link
@@ -381,6 +382,7 @@ export function Footer() {
                 </Link>
               ))}
             </div>
+            */}
 
             {/* Right */}
             <p className="text-white/30 flex items-center gap-1.5">
