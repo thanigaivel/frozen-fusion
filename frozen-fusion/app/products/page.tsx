@@ -611,7 +611,7 @@ export default function ProductsPage() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [toast, setToast] = useState<{ message: string; visible: boolean } | null>(null);
 
-  const [fetchedProducts, setFetchedProducts] = useState<Product[]>(ALL_PRODUCTS);
+  const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
 
   // Load favorites from localStorage
@@ -642,6 +642,7 @@ export default function ProductsPage() {
         }
       } catch (err) {
         console.error("Failed to fetch dynamic products, using fallback data:", err);
+        setFetchedProducts(ALL_PRODUCTS);
       } finally {
         setLoadingProducts(false);
       }
@@ -788,7 +789,12 @@ export default function ProductsPage() {
 
       {/* ── Gallery ── */}
       <div className="flex-1 px-6 max-w-[1400px] mx-auto w-full pb-24">
-        {filteredCategories.length === 0 ? (
+        {loadingProducts ? (
+          <div className="flex flex-col items-center justify-center py-32 gap-4">
+            <div className="w-10 h-10 border-4 border-[#FF6BD6] border-t-transparent rounded-full animate-spin shadow-[0_0_20px_#FF6BD6]" />
+            <p className="text-white/50 font-inter text-sm tracking-widest uppercase">Loading Menu...</p>
+          </div>
+        ) : filteredCategories.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
