@@ -3,8 +3,14 @@
 [build]
   # Command Netlify runs to build the project
   command = "npm run build"
-  # Override UI settings to publish the Next.js standard build output
-  publish = ".next"
+  # Static export outputs to "out/" (Next.js default for output: "export")
+  publish = "out"
+
+# Redirect all routes to index.html so Next.js client-side routing works
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
 
 # Security & performance headers
 [[headers]]
