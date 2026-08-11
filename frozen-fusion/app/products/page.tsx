@@ -110,7 +110,7 @@ function ProductCard({
       {/* Image */}
       <div className="relative h-44 overflow-hidden">
         <Image
-          src={product.image}
+          src={product.image || "/logo.png"}
           alt={product.name}
           fill
           unoptimized
@@ -367,7 +367,7 @@ function FlavorModal({
           {/* Image */}
           <div className="relative md:w-1/2 h-80 md:h-auto flex-shrink-0 overflow-hidden">
             <Image
-              src={product.image}
+              src={product.image || "/logo.png"}
               alt={product.name}
               fill
               unoptimized
@@ -447,7 +447,7 @@ function FlavorModal({
                       className="flex-shrink-0 w-12 h-12 rounded-xl overflow-hidden relative border"
                       style={{ borderColor: `${rp.color}30` }}
                     >
-                      <Image src={rp.image} alt={rp.name} fill unoptimized className="object-cover" sizes="48px" />
+                      <Image src={rp.image || "/logo.png"} alt={rp.name} fill unoptimized className="object-cover" sizes="48px" />
                     </div>
                   ))}
                 </div>

@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getProducts, createProduct } from "@/lib/products-db";
-import { promises as fs } from "fs";
-import path from "path";
+import { v2 as cloudinary } from "cloudinary";
+
+
 
 export const dynamic = "force-dynamic";
 
@@ -40,20 +41,23 @@ export async function POST(request: Request) {
     if (file && file.size > 0) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-      
-      const uploadDir = path.join(process.cwd(), "../frozen-fusion/public/products", categoryName);
-      const filePath = path.join(uploadDir, fileName);
-      
-      // Ensure directory exists (fallback in case it wasn't created)
-      try {
-        await fs.access(uploadDir);
-      } catch {
-        await fs.mkdir(uploadDir, { recursive: true });
-      }
 
-      await fs.writeFile(filePath, buffer);
-      imageUrl = `/products/${categoryName}/${fileName}`;
+      try {
+        const uploadResult = await new Promise<any>((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            { folder: `frozen-fusion/products/${categoryName}` },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          );
+          uploadStream.end(buffer);
+        });
+        imageUrl = uploadResult.secure_url;
+      } catch (uploadError) {
+        console.error("Cloudinary Upload Error:", uploadError);
+        return NextResponse.json({ error: "Failed to upload image to cloud." }, { status: 500 });
+      }
     }
 
     const id = await createProduct({
