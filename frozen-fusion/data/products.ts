@@ -149,150 +149,450 @@ const RAW_CATEGORIES = [
     id: "milk-popsicles",
     name: "Premium Popsicle",
     icon: "🥛",
-    description: "Rich, creamy milk-based popsicles in decadent flavours.",
+    description: "Experience the rich, creamy delight of our signature milk-based popsicles.",
     headerColor: "#60A5FA",
     products: [
-      p("milk-popsicles", "Vanilla",         "Classic creamy vanilla with sweet milky notes.",        "popsicle", "Best Seller", 4.8, ["classic","mild"]),
-      p("milk-popsicles", "Chocolate",       "Rich Belgian cocoa swirled in pure cream milk.",         "chocolate","Best Seller", 4.9, ["rich","popular"]),
-      p("milk-popsicles", "Strawberry",      "Fresh strawberry puree in a velvety milk base.",         "strawberry",null,          4.5, ["fruity","mild"]),
-      p("milk-popsicles", "Mango",           "Alphonso mango blended with premium milk.",              "mango",   "Best Seller", 4.8, ["fruity","popular"]),
-      p("milk-popsicles", "Butterscotch",    "Caramel-toffee swirl with a buttery cream finish.",      "popsicle", null,          4.6, ["sweet","caramel"]),
-      p("milk-popsicles", "Kesar Pista",     "Royal saffron and pistachio in a luxe milk popsicle.",  "kulfi",   "Popular",     4.9, ["exotic","premium"]),
-      p("milk-popsicles", "Black Currant",   "Tart black currant with a velvet cream base.",           "fruit",    null,          4.4, ["tart","bold"]),
-      p("milk-popsicles", "Coffee",          "Double espresso and cream — a pick-me-up popsicle.",     "popsicle", "New",         4.6, ["bold","coffee"]),
-      p("milk-popsicles", "Tender Coconut",  "Fresh tender coconut water and cream in every bite.",    "popsicle", null,          4.5, ["refreshing","light"]),
-      p("milk-popsicles", "Badam Milk",      "Almond-infused warm spiced milk, now frozen to perfection.", "kulfi", null,         4.7, ["nutty","premium"]),
+      {
+        id: "6a79c87b50a038a1e54aa529",
+        name: "Berry Blast",
+        categoryId: "milk-popsicles",
+        description: "A refreshing burst of mixed berry goodness in every bite, blending deliciously sweet and tangy berry flavours into a vibrant, fruity popsicle. Cool, juicy, and irresistibly refreshing!",
+        badge: "New",
+        rating: 4.7,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("berry blast")
+      },
+      {
+        id: "6a79c86650a038a1e54aa528",
+        name: "Oreo Streak",
+        categoryId: "milk-popsicles",
+        description: "A creamy, indulgent popsicle swirled with the irresistible taste of Oreo cookies. Rich, crunchy, and delightfully chocolaty, delivering a perfect Oreo-inspired treat in every bite.",
+        badge: "Best Seller",
+        rating: 4.5,
+        image: "",
+        color: "#60fbab",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("oreo streak")
+      },
+      {
+        id: "6a79c7f450a038a1e54aa527",
+        name: "Chocolate Brownie Magnum",
+        categoryId: "milk-popsicles",
+        description: "A rich and indulgent chocolate popsicle inspired by the classic Magnum, packed with luscious brownie flavour and deep chocolate goodness. Creamy, decadent, and irresistibly satisfying in every bite.",
+        badge: "Best Seller",
+        rating: 4.7,
+        image: "https://res.cloudinary.com/pkdupslt/image/upload/v1786436023/frozen-fusion/products/Premium_Popsicle/t2vrkx1bf2dlqz1xypub.jpg",
+        color: "#27c2dd",
+        tags: ["popular"],
+        visible: true,
+        // computed properties
+        ...fc("chocolate brownie magnum")
+      },
+      {
+        id: "6a79c6d150a038a1e54aa526",
+        name: "Coffee Almond Fudge Magnum",
+        categoryId: "milk-popsicles",
+        description: "A luxurious blend of rich coffee, roasted almonds, and indulgent fudge in a creamy Magnum-style popsicle. Bold, nutty, and irresistibly chocolaty—a perfect treat for coffee and chocolate lovers.",
+        badge: "Popular",
+        rating: 4.7,
+        image: "https://res.cloudinary.com/pkdupslt/image/upload/v1786433119/frozen-fusion/products/Premium_Popsicle/ttpn8vtlhz8gd1pwpn24.jpg",
+        color: "#57423d",
+        tags: ["popular"],
+        visible: true,
+        // computed properties
+        ...fc("coffee almond fudge magnum")
+      },
+      {
+        id: "6a79c55950a038a1e54aa525",
+        name: "Lotus Biscoff",
+        categoryId: "milk-popsicles",
+        description: "A creamy and indulgent popsicle infused with the irresistible caramelised flavour of Lotus Biscoff. Smooth, rich, and deliciously spiced, with the signature Biscoff taste in every bite.",
+        badge: "New",
+        rating: 4.9,
+        image: "https://res.cloudinary.com/pkdupslt/image/upload/v1786426018/frozen-fusion/products/Premium_Popsicle/w8dstikp7y5zlrsrn2cp.jpg",
+        color: "#60A5FA",
+        tags: ["Best Seller"],
+        visible: true,
+        // computed properties
+        ...fc("lotus biscoff")
+      },
+      {
+        id: "6a78295970a892e9e4ae965a",
+        name: "Belgium chocolate",
+        categoryId: "milk-popsicles",
+        description: "A rich and creamy chocolate popsicle crafted with the deep, luxurious flavour of Belgian chocolate. Smooth, indulgent, and intensely chocolaty—a decadent treat for true chocolate lovers.",
+        badge: "Popular",
+        rating: 4.5,
+        image: "/products/Premium Milk Popsicles/1786259801485-2.png_2K_202608081310.jpeg",
+        color: "#60A5FA",
+        tags: ["popular","premium"],
+        visible: true,
+        // computed properties
+        ...fc("belgium chocolate")
+      }
     ],
   },
-
   {
     id: "kulfi",
     name: "Kulfi Varieties",
     icon: "🍨",
-    description: "Authentic Indian kulfi with premium ingredients and exotic spices.",
-    headerColor: "#D4AF37",
+    description: "Traditional Indian kulfi in authentic and exotic fusion flavours.",
+    headerColor: "#FBBF24",
     products: [
-      p("kulfi", "Malai Kulfi",      "The original. Dense milk with a clotted cream crown.",        "kulfi",    "Best Seller", 5.0, ["classic","premium"]),
-      p("kulfi", "Kesar Pista",      "Saffron threads and crushed pistachio — regal indulgence.",   "kulfi",    "Best Seller", 4.9, ["exotic","premium"]),
-      p("kulfi", "Badam",            "Pure almond milk kulfi slow-frozen to silky perfection.",      "kulfi",    "Popular",     4.8, ["nutty","premium"]),
-      p("kulfi", "Mango Kulfi",      "Alphonso mango meets the old-world kulfi tradition.",          "mango",    "Seasonal",   4.8, ["fruity","popular"]),
-      p("kulfi", "Rose",             "Damask rose water and saffron, a Mughal-inspired kulfi.",      "kulfi",    "New",         4.6, ["floral","exotic"]),
-      p("kulfi", "Elaichi",          "Green cardamom and pistachio in a creamy frozen stick.",       "kulfi",    null,          4.7, ["spiced","classic"]),
-      p("kulfi", "Chocolate Kulfi",  "Dark chocolate fused with dense kulfi — a bold union.",        "chocolate",null,          4.7, ["rich","bold"]),
-      p("kulfi", "Rabdi Kulfi",      "Slow-cooked reduced milk with cardamom and rose.",             "kulfi",    "Limited",    4.9, ["premium","exotic"]),
+      {
+        id: "6a79ca3350a038a1e54aa52c",
+        name: "Malai Infused Pista Kulfi",
+        categoryId: "kulfi",
+        description: "Malai Infused Pista Kulfi Flavour",
+        badge: "New",
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("malai infused pista kulfi")
+      },
+      {
+        id: "6a79ca1650a038a1e54aa52b",
+        name: "Rose Gulkhaad Kulfi",
+        categoryId: "kulfi",
+        description: "Rose Gulkhand Kulfi Flavour",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        color: "#60fbc7",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("rose gulkhaad kulfi")
+      },
+      {
+        id: "6a79c9ed50a038a1e54aa52a",
+        name: "Malai Kulfi",
+        categoryId: "kulfi",
+        description: "Malai Kulfi Flavour",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        color: "#e9fb60",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("malai kulfi")
+      }
     ],
   },
   {
     id: "fruit-shaped",
     name: "Fruit Shaped Ice Cream",
     icon: "🍉",
-    description: "Whimsical fruit-shaped ice creams that delight the eyes and the palate.",
-    headerColor: "#4ADE80",
+    description: "Fun, fruity, and incredibly delicious — shaped like real fruits!",
+    headerColor: "#34D399",
     products: [
-      p("fruit-shaped", "Mango Shape",       "Mango-flavored ice shaped like a perfect mango.",         "mango",    "Best Seller", 4.8, ["fun","fruity"]),
-      p("fruit-shaped", "Watermelon Shape",  "Watermelon cream shaped as a mini watermelon slice.",     "fruit",    "Popular",     4.7, ["fun","summer"]),
-      p("fruit-shaped", "Orange Shape",      "Orange sorbet in a perfectly sculpted orange form.",       "fruit",    null,          4.5, ["fun","citrus"]),
-      p("fruit-shaped", "Lemon Shape",       "Tangy lemon cream in a cute lemon-shaped shell.",          "fruit",    null,          4.4, ["fun","citrus"]),
-      p("fruit-shaped", "Pineapple Shape",   "Tropical pineapple cream in a sculpted pineapple.",       "fruit",    "New",         4.5, ["fun","tropical"]),
-      p("fruit-shaped", "Strawberry Shape",  "Strawberry cream in a lifelike strawberry shape.",         "strawberry",null,          4.6, ["fun","sweet"]),
-      p("fruit-shaped", "Kiwi Shape",        "Kiwi ice cream with real kiwi seeds — strikingly real.",  "fruit",    "New",         4.7, ["fun","exotic"]),
-      p("fruit-shaped", "Coconut Shape",     "Tender coconut cream in a half-coconut shell form.",       "fruit",    null,          4.5, ["fun","tropical"]),
+      {
+        id: "6a79cb6750a038a1e54aa533",
+        name: "Kutty Pops Tub",
+        categoryId: "fruit-shaped",
+        description: "A fun-filled tub packed with 10 delicious mini–Kutty Pops in assorted flavours. Perfectly sized, colourful, and bursting with flavour—great for sharing, parties, or enjoying a little bit of everything!",
+        badge: null,
+        rating: 4.7,
+        image: "",
+        color: "#60A5FA",
+        tags: ["Premium"],
+        visible: true,
+        // computed properties
+        ...fc("kutty pops tub")
+      },
+      {
+        id: "6a79cb5750a038a1e54aa532",
+        name: "Lemon Fruit Shaped Ice Cream",
+        categoryId: "fruit-shaped",
+        description: "Lemon Fruit Shaped Ice Cream",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("lemon fruit shaped ice cream")
+      },
+      {
+        id: "6a79cb4650a038a1e54aa531",
+        name: "Mango Fruit Shaped Ice Cream",
+        categoryId: "fruit-shaped",
+        description: "Mango Fruit Shaped Ice Cream",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("mango fruit shaped ice cream")
+      }
     ],
   },
   {
     id: "scoops",
     name: "Classic Ice Creams",
     icon: "🍦",
-    description: "Dense, rich hand-crafted scoops in 15 premium flavours.",
+    description: "Timeless classics made with premium ingredients and real dairy.",
     headerColor: "#F472B6",
     products: [
-      p("scoops", "Belgian Chocolate",       "Single-origin Belgian dark chocolate — pure decadence.",   "chocolate","Best Seller", 5.0, ["rich","bold","popular"]),
-      p("scoops", "Vanilla Bean",            "Madagascar vanilla bean flecks in velvety cream.",          "vanilla",  "Best Seller", 4.8, ["classic","mild"]),
-      p("scoops", "Strawberry",              "Fresh strawberry ripple swirled through cream.",             "strawberry","Popular",    4.6, ["fruity","sweet"]),
-      p("scoops", "Black Currant",           "Bold black currant coulis in premium ice cream.",            "scoop",    null,          4.5, ["tart","bold"]),
-      p("scoops", "Mango",                   "Alphonso mango from Ratnagiri, churned to perfection.",      "mango",    "Best Seller", 4.8, ["fruity","popular"]),
-      p("scoops", "Pistachio",               "Iranian pistachio — rich, nutty, and brilliantly green.",    "scoop",    "Popular",     4.7, ["nutty","premium"]),
-      p("scoops", "Cookies & Cream",         "Crushed dark cookies swirled in pure vanilla cream.",        "scoop",    "Best Seller", 4.9, ["popular","sweet"]),
-      p("scoops", "Butterscotch",            "Caramel praline and rich buttery cream — irresistible.",     "scoop",    null,          4.6, ["sweet","caramel"]),
-      p("scoops", "Coffee",                  "Cold brew concentrate blended with pure cream.",             "scoop",    "Popular",     4.7, ["bold","coffee"]),
-      p("scoops", "Mint Chocolate",          "Cool peppermint cream laced with dark chocolate chips.",     "mint",     "New",         4.6, ["refreshing","popular"]),
-      p("scoops", "Blueberry Cheesecake",    "Wild blueberry compote over a cream cheese base.",           "scoop",    "New",         4.8, ["fruity","premium"]),
-      p("scoops", "Salted Caramel",          "Sea-salted caramel ribbons through silky cream.",            "scoop",    "Popular",     4.9, ["premium","sweet"]),
-      p("scoops", "Cotton Candy",            "Fairground spun sugar aroma in a pastel pink scoop.",        "scoop",    null,          4.3, ["sweet","fun"]),
-      p("scoops", "Bubblegum",               "Nostalgic bubblegum with a sky-blue pastel hue.",            "scoop",    null,          4.2, ["fun","sweet"]),
-      p("scoops", "Tender Coconut",          "Pure fresh coconut water and flesh in every spoonful.",       "scoop",    "Best Seller", 4.7, ["refreshing","natural"]),
+      {
+        id: "6a79ccaa50a038a1e54aa53f",
+        name: "Pulpy Mango",
+        categoryId: "scoops",
+        description: "A creamy and refreshing mango ice cream made with the rich, juicy flavour of ripe mango pulp. Smooth, fruity, and bursting with authentic mango goodness in every scoop.",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("pulpy mango")
+      },
+      {
+        id: "6a79cc9750a038a1e54aa53e",
+        name: "Nut Butterscotch",
+        categoryId: "scoops",
+        description: "A rich and creamy butterscotch ice cream loaded with crunchy roasted nuts and irresistible caramelised notes. Smooth, nutty, and delightfully indulgent with a satisfying crunch in every scoop.",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("nut butterscotch")
+      },
+      {
+        id: "6a79cc8550a038a1e54aa53d",
+        name: "Strawberry",
+        categoryId: "scoops",
+        description: "A smooth and creamy ice cream bursting with the fresh, fruity sweetness of ripe strawberries. Refreshing, luscious, and delightfully fruity—a timeless favourite in every scoop.",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("strawberry")
+      },
+      {
+        id: "6a79cc7750a038a1e54aa53c",
+        name: "Vanilla",
+        categoryId: "scoops",
+        description: "A smooth and creamy classic with the delicate, aromatic flavour of premium vanilla. Rich, velvety, and perfectly balanced, making every scoop timelessly delicious.",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("vanilla")
+      }
     ],
   },
   {
     id: "sandwiches",
     name: "Ice Cream Sandwich & Slices",
     icon: "🍪",
-    description: "Creamy ice cream sandwiched between premium wafers and cookies.",
+    description: "Decadent ice cream sandwiched between premium cookies or cut into perfect slices.",
     headerColor: "#A78BFA",
     products: [
-      p("sandwiches", "Vanilla",         "Classic vanilla cream between crisp golden wafers.",         "sandwich", "Best Seller", 4.8, ["classic","popular"]),
-      p("sandwiches", "Chocolate",       "Rich chocolate between dark cocoa wafer cookies.",            "chocolate","Best Seller", 4.9, ["rich","popular"]),
-      p("sandwiches", "Cookies & Cream", "Oreo-style cookies with vanilla cream — doubly delicious.",  "sandwich", "Popular",     4.8, ["sweet","popular"]),
-      p("sandwiches", "Strawberry",      "Strawberry ripple cream between strawberry wafers.",          "strawberry",null,          4.5, ["fruity","sweet"]),
-      p("sandwiches", "Coffee",          "Cold brew ice cream in espresso-dusted dark wafers.",         "sandwich", "New",         4.6, ["bold","coffee"]),
-      p("sandwiches", "Butterscotch",    "Butterscotch cream in a toffee-coated wafer shell.",          "sandwich", null,          4.5, ["sweet","caramel"]),
+      {
+        id: "6a79ca7b50a038a1e54aa52f",
+        name: "Roasted Almond Caramel Pineapple Slices",
+        categoryId: "sandwiches",
+        description: "Juicy pineapple slices topped with rich caramel and crunchy roasted almonds, creating a delicious blend of sweet, tangy, nutty, and caramelised flavours. A refreshing yet indulgent frozen treat in every bite.",
+        badge: "Best Seller",
+        rating: 4.9,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("roasted almond caramel pineapple slices")
+      },
+      {
+        id: "6a79853483d89583aa19b945",
+        name: "Oreo Ice Cream Sandwich",
+        categoryId: "sandwiches",
+        description: "Rich and creamy cookies-and-cream ice cream packed with crunchy Oreo cookie pieces, perfectly sandwiched between two delicious chocolatey Oreo-style biscuits. Every bite brings together smooth creaminess, deep chocolate flavour, and the satisfying crunch of cookies.",
+        badge: "Best Seller",
+        rating: 4.9,
+        image: "/products/Ice Cream Sandwiches/1786348851739-IMG_2110.PNG",
+        color: "#60A5FA",
+        tags: ["Premium"],
+        visible: true,
+        // computed properties
+        ...fc("oreo ice cream sandwich")
+      },
+      {
+        id: "6a79848a83d89583aa19b944",
+        name: "Lotus Biscoff Ice Cream Sandwich",
+        categoryId: "sandwiches",
+        description: "Creamy Biscoff ice cream with crunchy caramelised biscuit pieces, sandwiched between two delicious Biscoff biscuits. A perfect harmony of creamy indulgence and irresistible crunch.",
+        badge: "Best Seller",
+        rating: 4.9,
+        image: "/products/Ice Cream Sandwiches/1786348682940-IMG_2111.PNG",
+        color: "#60A5FA",
+        tags: ["Signature"],
+        visible: true,
+        // computed properties
+        ...fc("lotus biscoff ice cream sandwich")
+      }
     ],
   },
   {
     id: "shakes",
     name: "Thick Shakes",
     icon: "🥤",
-    description: "Impossibly thick, luxuriously creamy shakes you have to taste to believe.",
-    headerColor: "#67E8F9",
+    description: "Thick, creamy, and loaded with your favourite flavours.",
+    headerColor: "#F87171",
     products: [
-      p("shakes", "Chocolate Shake",    "Four scoops of Belgian chocolate spun into pure silk.",     "shake",     "Best Seller", 5.0, ["rich","popular"]),
-      p("shakes", "Oreo Shake",         "Crushed Oreos blended with vanilla cream and milk.",          "shake",     "Best Seller", 4.9, ["popular","sweet"]),
-      p("shakes", "KitKat Shake",       "Chunky KitKat pieces in a hazelnut chocolate shake.",         "shake",     "Popular",     4.8, ["sweet","popular"]),
-      p("shakes", "Vanilla Shake",      "Pure Madagascar vanilla in a thick, airy cream shake.",       "vanilla",   null,          4.6, ["classic","mild"]),
-      p("shakes", "Strawberry Shake",   "Ripe strawberries blended with strawberry ice cream.",         "strawberry","Popular",     4.7, ["fruity","sweet"]),
-      p("shakes", "Mango Shake",        "Thick Alphonso mango with cream — no filler, pure fruit.",    "mango",     "Best Seller", 4.8, ["fruity","popular"]),
-      p("shakes", "Coffee Shake",       "Triple espresso with coffee ice cream and cold milk.",          "shake",     "New",         4.7, ["bold","coffee"]),
-      p("shakes", "Butterscotch Shake", "Golden butterscotch blended with toffee bits and cream.",      "shake",     null,          4.6, ["sweet","caramel"]),
-      p("shakes", "Caramel Shake",      "Sea-salted caramel swirled through thick cream — divine.",     "shake",     "Popular",     4.7, ["premium","sweet"]),
-      p("shakes", "Brownie Shake",      "Warm brownie chunks blended into a thick chocolate shake.",    "shake",     "Limited",     4.9, ["premium","popular"]),
+      {
+        id: "6a79cb9d50a038a1e54aa536",
+        name: "Lotus Biscoff Shakes",
+        categoryId: "shakes",
+        description: "A rich and creamy shake blended with the irresistible caramelised flavour of Lotus Biscoff biscuits. Smooth, indulgent, and delightfully crunchy—a perfect treat for every Biscoff lover.",
+        badge: "Best Seller",
+        rating: 4.9,
+        image: "",
+        color: "#60A5FA",
+        tags: ["Signature"],
+        visible: true,
+        // computed properties
+        ...fc("lotus biscoff shakes")
+      },
+      {
+        id: "6a79cb9150a038a1e54aa535",
+        name: "Chocolate Fantasy Shake",
+        categoryId: "shakes",
+        description: "A rich, creamy, and indulgent chocolate shake crafted for true chocolate lovers. Smooth, thick, and loaded with irresistible chocolate goodness in every sip.",
+        badge: "Limited",
+        rating: 4.9,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("chocolate fantasy shake")
+      },
+      {
+        id: "6a79cb7d50a038a1e54aa534",
+        name: "Oreo Shake",
+        categoryId: "shakes",
+        description: "A thick and creamy shake blended with the classic taste of Oreo cookies and rich vanilla goodness. Smooth, crunchy, and irresistibly indulgent—a delicious treat in every sip.",
+        badge: "Popular",
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("oreo shake")
+      }
     ],
   },
   {
     id: "fusion-drinks",
     name: "Fusion Drinks",
     icon: "🍹",
-    description: "Innovative beverage creations that blur the line between drink and dessert.",
-    headerColor: "#34D399",
+    description: "Refreshing, exotic mocktails and fusion beverages.",
+    headerColor: "#38BDF8",
     products: [
-      p("fusion-drinks", "Blue Lagoon",          "Electric blue curacao with citrus soda and mint ice.",   "drink",  "Best Seller", 4.8, ["refreshing","popular"]),
-      p("fusion-drinks", "Berry Blast",           "Mixed berry smoothie with soda and berry sorbet.",        "drink",  "Popular",     4.7, ["fruity","bold"]),
-      p("fusion-drinks", "Mango Passion",         "Mango puree with passion fruit and sparkling water.",     "mango",  "Best Seller", 4.9, ["tropical","popular"]),
-      p("fusion-drinks", "Tropical Fusion",       "Pineapple, coconut, and mango — the ultimate trio.",      "drink",  null,          4.6, ["tropical","fruity"]),
-      p("fusion-drinks", "Strawberry Lemonade",   "Fresh strawberry over tangy lemonade with ice.",          "strawberry","Popular",   4.7, ["citrus","sweet"]),
-      p("fusion-drinks", "Mint Mojito",            "Fresh mint, lime, soda — a booze-free tropical classic.", "mint",  "New",         4.6, ["refreshing","tangy"]),
-      p("fusion-drinks", "Pineapple Punch",        "Tropical pineapple with a fizzy punch of citrus.",       "drink",  null,          4.5, ["tropical","tangy"]),
-      p("fusion-drinks", "Orange Spark",           "Fresh orange with a sparkling citrus kick.",              "drink",  null,          4.4, ["citrus","refreshing"]),
-      p("fusion-drinks", "Kiwi Splash",            "Kiwi and lime soda with ice cream floats.",               "drink",  "New",         4.6, ["fruity","tangy"]),
-      p("fusion-drinks", "Rainbow Fusion",         "Six fruit layers in a glass — as bold as it looks.",      "drink",  "Limited",     4.8, ["fun","premium"]),
+      {
+        id: "6a79cc0750a038a1e54aa53b",
+        name: "Blue Moon Mojito",
+        categoryId: "fusion-drinks",
+        description: "Blue Moon Mojito",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("blue moon mojito")
+      },
+      {
+        id: "6a79cbf650a038a1e54aa53a",
+        name: "Electric Fizz Mojito",
+        categoryId: "fusion-drinks",
+        description: "Electric Fizz Mojito",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("electric fizz mojito")
+      },
+      {
+        id: "6a79cbe450a038a1e54aa539",
+        name: "Mint Mojito",
+        categoryId: "fusion-drinks",
+        description: "Mint Mojito",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("mint mojito")
+      }
     ],
   },
   {
     id: "sundaes",
     name: "Desserts",
     icon: "🍧",
-    description: "Layered sundaes piled high with premium toppings and luxury sauces.",
-    headerColor: "#F97316",
+    description: "Over-the-top sundaes loaded with toppings and pure joy.",
+    headerColor: "#FBBF24",
     products: [
-      p("sundaes", "Chocolate Sundae",   "Three scoops drowned in dark chocolate sauce and nuts.",    "sundae",   "Best Seller", 5.0, ["rich","popular"]),
-      p("sundaes", "Brownie Sundae",     "Warm brownie base with vanilla and hot fudge topping.",     "sundae",   "Best Seller", 4.9, ["premium","popular"]),
-      p("sundaes", "Strawberry Sundae",  "Strawberry ice cream with fresh berry coulis and cream.",   "sundae",   "Popular",     4.7, ["fruity","sweet"]),
-      p("sundaes", "Oreo Sundae",        "Vanilla base topped with crushed Oreos and fudge drizzle.", "sundae",   null,          4.8, ["popular","sweet"]),
-      p("sundaes", "Caramel Sundae",     "Salted caramel sauce over butterscotch scoops.",            "sundae",   null,          4.7, ["sweet","caramel"]),
-      p("sundaes", "Mango Sundae",       "Mango sorbet with mango coulis and toasted coconut.",        "mango",    "Seasonal",   4.7, ["fruity","tropical"]),
-      p("sundaes", "Triple Chocolate",   "Dark, milk, and white chocolate in three-scoop glory.",     "chocolate","Best Seller", 4.9, ["rich","bold"]),
-      p("sundaes", "Nuts Delight",       "Three scoops buried under praline, almonds, and toffee.",   "sundae",   null,          4.6, ["nutty","premium"]),
-      p("sundaes", "Banana Split",       "The classic: two banana halves, three scoops, triple sauce.", "sundae",   "Popular",    4.8, ["classic","popular"]),
-      p("sundaes", "Royal Sundae",       "Our most decadent creation with gold-dusted saffron cream.",  "sundae",  "Limited",     5.0, ["premium","exotic"]),
+      {
+        id: "6a79cbcb50a038a1e54aa538",
+        name: "Falooda",
+        categoryId: "sundaes",
+        description: "Falooda",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("falooda")
+      },
+      {
+        id: "6a79cbaf50a038a1e54aa537",
+        name: "Chocolate Kalakki",
+        categoryId: "sundaes",
+        description: "Chocolate Kalakki",
+        badge: null,
+        rating: 4.9,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("chocolate kalakki")
+      }
     ],
   },
   {
@@ -302,14 +602,104 @@ const RAW_CATEGORIES = [
     description: "Limited-time masterpieces crafted for each season and festival.",
     headerColor: "#A78BFA",
     products: [
-      p("seasonal", "Mango Fiesta",           "Summer's crown jewel — pure Ratnagiri Alphonso mango.",    "mango",   "Seasonal",   4.9, ["summer","limited"]),
-      p("seasonal", "Watermelon Chill",       "Cool, juicy watermelon to beat the summer heat.",           "fruit",   "Seasonal",   4.7, ["summer","refreshing"]),
-      p("seasonal", "Coconut Bliss",          "Fresh tender coconut sorbet — cool and tropical.",           "fruit",   "Seasonal",   4.6, ["summer","natural"]),
-      p("seasonal", "Hot Chocolate Float",    "Warm dark chocolate poured over vanilla ice cream.",         "chocolate","Limited",    4.8, ["winter","premium"]),
-      p("seasonal", "Coffee Crunch",          "Espresso ice cream with a toffee crunch layer.",             "seasonal","Limited",    4.7, ["winter","bold"]),
-      p("seasonal", "Diwali Delight",         "Kesar, rose, and pistachio — a festive trio.",               "kulfi",   "Limited",    5.0, ["festival","premium"]),
-      p("seasonal", "Christmas Berry",        "Red velvet with white chocolate and cranberry swirl.",        "seasonal","Limited",    4.8, ["festival","sweet"]),
-      p("seasonal", "New Year Celebration",   "Gold-dusted champagne sorbet — pop the new year in style.", "seasonal","Limited",    4.9, ["festival","exotic"]),
+      {
+        id: "6a79cd3e50a038a1e54aa546",
+        name: "Tiramisu",
+        categoryId: "seasonal",
+        description: "A rich and indulgent Italian-inspired ice cream layered with creamy coffee flavour and delicate cocoa notes. Smooth, velvety, and irresistibly delicious—a perfect treat for every tiramisu lover.",
+        badge: "Limited",
+        rating: 4.8,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("tiramisu")
+      },
+      {
+        id: "6a79cd2e50a038a1e54aa545",
+        name: "Red Velvet",
+        categoryId: "seasonal",
+        description: "A luxurious, creamy ice cream inspired by the classic red velvet cake, with rich cocoa notes and a smooth, velvety texture. Decadent, indulgent, and deliciously satisfying in every scoop.",
+        badge: "Limited",
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: ["Premium"],
+        visible: true,
+        // computed properties
+        ...fc("red velvet")
+      },
+      {
+        id: "6a79cd1c50a038a1e54aa544",
+        name: "Lychee",
+        categoryId: "seasonal",
+        description: "A refreshing and creamy ice cream infused with the delicate, juicy sweetness of ripe lychee. Light, fruity, and irresistibly refreshing—perfect for a deliciously tropical treat.",
+        badge: "Popular",
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: ["Premium"],
+        visible: true,
+        // computed properties
+        ...fc("lychee")
+      },
+      {
+        id: "6a79cd0e50a038a1e54aa543",
+        name: "Cotton Candy",
+        categoryId: "seasonal",
+        description: "A fun and dreamy ice cream bursting with the sweet, nostalgic flavour of classic cotton candy. Creamy, colourful, and delightfully playful—a magical treat for kids and the young at heart.",
+        badge: "Popular",
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: ["Premium"],
+        visible: true,
+        // computed properties
+        ...fc("cotton candy")
+      },
+      {
+        id: "6a79ccf750a038a1e54aa542",
+        name: "Chocolate Fantasy",
+        categoryId: "seasonal",
+        description: "A rich and indulgent chocolate ice cream crafted for true chocolate lovers. Creamy, smooth, and intensely chocolaty, delivering a decadent burst of chocolate goodness in every scoop.",
+        badge: "Limited",
+        rating: 4.9,
+        image: "",
+        color: "#60A5FA",
+        tags: ["Exotic"],
+        visible: true,
+        // computed properties
+        ...fc("chocolate fantasy")
+      },
+      {
+        id: "6a79ccda50a038a1e54aa541",
+        name: "Black Forest",
+        categoryId: "seasonal",
+        description: "A rich and indulgent ice cream inspired by the classic Black Forest cake, combining luscious chocolate, sweet cherry flavours, and creamy goodness in every scoop. A decadent dessert for every chocolate lover",
+        badge: "Popular",
+        rating: 4.8,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("black forest")
+      },
+      {
+        id: "6a79ccc850a038a1e54aa540",
+        name: "Black Currant",
+        categoryId: "seasonal",
+        description: "A creamy and refreshing ice cream bursting with the rich, tangy-sweet flavour of black currants. Smooth, fruity, and irresistibly refreshing—a perfect balance of bold berry flavour and creamy indulgence.",
+        badge: "Popular",
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("black currant")
+      }
     ],
   },
   {
@@ -319,17 +709,106 @@ const RAW_CATEGORIES = [
     description: "Premium family-pack tubs — perfect for gatherings and celebrations.",
     headerColor: "#60A5FA",
     products: [
-      p("bulk", "Vanilla",          "The classic family favourite in a generous 4-litre tub.",    "vanilla",   "Best Seller", 4.8, ["classic","family"]),
-      p("bulk", "Chocolate",        "Rich Belgian chocolate for the whole family to share.",       "chocolate", "Best Seller", 4.9, ["rich","popular"]),
-      p("bulk", "Strawberry",       "Fresh strawberry ripple in a vibrant family-pack tub.",       "strawberry","Popular",     4.6, ["fruity","family"]),
-      p("bulk", "Mango",            "Alphonso mango — the bestselling bulk flavour.",               "mango",     "Best Seller", 4.9, ["fruity","popular"]),
-      p("bulk", "Butterscotch",     "Golden butterscotch in a caramel-swirled tub.",               "bulk",      null,          4.5, ["sweet","family"]),
-      p("bulk", "Black Currant",    "Bold black currant in a deep purple family-pack.",             "bulk",      null,          4.4, ["tart","bold"]),
-      p("bulk", "Pistachio",        "Roasted pistachio in a premium 4-litre pack.",                 "bulk",      "Popular",     4.7, ["nutty","premium"]),
-      p("bulk", "Cookies & Cream",  "Family favourite: vanilla cream with crushed cookies.",        "bulk",      "Best Seller", 4.8, ["popular","sweet"]),
-      p("bulk", "Tender Coconut",   "Fresh tender coconut — a tropical treat in bulk.",             "bulk",      null,          4.6, ["natural","refreshing"]),
+      {
+        id: "6a79cdcd50a038a1e54aa54d",
+        name: "White Chocolate Raspberry",
+        categoryId: "bulk",
+        description: "A luxurious blend of creamy white chocolate and the vibrant, tangy sweetness of raspberries. Smooth, rich, and delightfully fruity, creating a perfect balance of indulgence and freshness in every scoop.",
+        badge: "Best Seller",
+        rating: 4.9,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("white chocolate raspberry")
+      },
+      {
+        id: "6a79cdbb50a038a1e54aa54c",
+        name: "Royal Fruits and Nuts",
+        categoryId: "bulk",
+        description: "A rich and creamy indulgence loaded with a delicious medley of premium fruits and crunchy nuts. Bursting with texture, flavour, and royal richness in every scoop—truly fit for a king!",
+        badge: "Best Seller",
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("royal fruits and nuts")
+      },
+      {
+        id: "6a79cda750a038a1e54aa54b",
+        name: "Roasted Almond Pineapple Caramel",
+        categoryId: "bulk",
+        description: "A luxurious blend of roasted almonds, juicy pineapple, and rich caramel swirled into creamy ice cream. Sweet, nutty, fruity, and irresistibly indulgent—a delightful combination of flavours and textures in every scoop.",
+        badge: "Best Seller",
+        rating: 4.9,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("roasted almond pineapple caramel")
+      },
+      {
+        id: "6a79cd8f50a038a1e54aa54a",
+        name: "Meetha Paan",
+        categoryId: "bulk",
+        description: "A unique Indian-inspired ice cream infused with the refreshing flavours of traditional meetha paan, with delicate notes of betel leaf, sweet fennel, and aromatic spices. Creamy, refreshing, and delightfully indulgent in every scoop",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("meetha paan")
+      },
+      {
+        id: "6a79cd7d50a038a1e54aa549",
+        name: "Lotus Biscoff",
+        categoryId: "bulk",
+        description: "A rich and creamy ice cream infused with the irresistible caramelised flavour of Lotus Biscoff biscuits. Smooth, crunchy, and delightfully indulgent, with warm spiced notes in every scoop.",
+        badge: "Best Seller",
+        rating: 4.5,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("lotus biscoff")
+      },
+      {
+        id: "6a79cd6650a038a1e54aa548",
+        name: "Chocolate Almond Fudge",
+        categoryId: "bulk",
+        description: "A rich and creamy chocolate ice cream loaded with crunchy roasted almonds and luscious fudge swirls. Decadent, nutty, and intensely chocolaty—a heavenly treat for true chocolate lovers.",
+        badge: "Best Seller",
+        rating: 4.9,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("chocolate almond fudge")
+      },
+      {
+        id: "6a79cd5350a038a1e54aa547",
+        name: "Blueberry Cheesecake",
+        categoryId: "bulk",
+        description: "A creamy cheesecake-inspired ice cream swirled with luscious blueberry flavour and delicate biscuit notes. Rich, tangy, fruity, and irresistibly indulgent in every scoop.",
+        badge: "Best Seller",
+        rating: 4.9,
+        image: "",
+        color: "#60A5FA",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("blueberry cheesecake")
+      }
     ],
-  },
+  }
 ];
 
 // ─── Attach category name and export ─────────────────────────────
