@@ -2,7 +2,15 @@ import { NextResponse } from "next/server";
 import { getProducts, createProduct } from "@/lib/products-db";
 import { v2 as cloudinary } from "cloudinary";
 
-
+const cloudinaryUrl = process.env.CLOUDINARY_URL || "";
+const match = cloudinaryUrl.match(/cloudinary:\/\/([^:]+):([^@]+)@(.+)/);
+if (match) {
+  cloudinary.config({
+    api_key: match[1],
+    api_secret: match[2],
+    cloud_name: match[3]
+  });
+}
 
 export const dynamic = "force-dynamic";
 
