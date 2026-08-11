@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Explore a universe of 100+ premium dessert flavours — from rich kulfi to exotic fusion drinks.",
 };
 
-export const revalidate = 60; // Revalidate at most every 60 seconds (ISR)
+export const dynamic = "force-dynamic";
 
 export default async function ProductsPage() {
   let initialProducts: Product[] = ALL_PRODUCTS;
@@ -15,9 +15,9 @@ export default async function ProductsPage() {
   try {
     const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || "http://localhost:3001";
     
-    // Fetch products on the server side
+    // Fetch products on the server side (No cache to show instant updates)
     const res = await fetch(`${adminUrl}/api/products`, { 
-      next: { revalidate: 60 }
+      cache: "no-store"
     });
     
     if (res.ok) {

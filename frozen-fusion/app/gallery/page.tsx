@@ -375,7 +375,7 @@ export default function GalleryPage() {
       try {
         const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL;
         const url = adminUrl ? `${adminUrl}/api/gallery` : "http://localhost:3001/api/gallery";
-        const res = await fetch(url);
+        const res = await fetch(url, { cache: "no-store" });
         if (res.ok) {
           const data = await res.json();
           if (data.images && data.images.length > 0) {
