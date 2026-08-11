@@ -10,7 +10,7 @@ export function Navbar() {
           alt="Frozen Fusion"
           width={300}
           height={110}
-          className="h-24 md:h-28 w-auto object-contain"
+          className="h-16 md:h-20 w-auto object-contain"
           priority
           fetchPriority="high"
         />
