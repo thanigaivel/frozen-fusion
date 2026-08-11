@@ -160,7 +160,6 @@ const RAW_CATEGORIES = [
         badge: "New",
         rating: 4.7,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -174,7 +173,6 @@ const RAW_CATEGORIES = [
         badge: "Best Seller",
         rating: 4.5,
         image: "",
-        color: "#60fbab",
         tags: [],
         visible: true,
         // computed properties
@@ -188,7 +186,6 @@ const RAW_CATEGORIES = [
         badge: "Best Seller",
         rating: 4.7,
         image: "https://res.cloudinary.com/pkdupslt/image/upload/v1786436023/frozen-fusion/products/Premium_Popsicle/t2vrkx1bf2dlqz1xypub.jpg",
-        color: "#27c2dd",
         tags: ["popular"],
         visible: true,
         // computed properties
@@ -202,7 +199,6 @@ const RAW_CATEGORIES = [
         badge: "Popular",
         rating: 4.7,
         image: "https://res.cloudinary.com/pkdupslt/image/upload/v1786433119/frozen-fusion/products/Premium_Popsicle/ttpn8vtlhz8gd1pwpn24.jpg",
-        color: "#57423d",
         tags: ["popular"],
         visible: true,
         // computed properties
@@ -216,7 +212,6 @@ const RAW_CATEGORIES = [
         badge: "New",
         rating: 4.9,
         image: "https://res.cloudinary.com/pkdupslt/image/upload/v1786426018/frozen-fusion/products/Premium_Popsicle/w8dstikp7y5zlrsrn2cp.jpg",
-        color: "#60A5FA",
         tags: ["Best Seller"],
         visible: true,
         // computed properties
@@ -230,7 +225,6 @@ const RAW_CATEGORIES = [
         badge: "Popular",
         rating: 4.5,
         image: "/products/Premium Milk Popsicles/1786259801485-2.png_2K_202608081310.jpeg",
-        color: "#60A5FA",
         tags: ["popular","premium"],
         visible: true,
         // computed properties
@@ -253,7 +247,6 @@ const RAW_CATEGORIES = [
         badge: "New",
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -267,7 +260,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.5,
         image: "",
-        color: "#60fbc7",
         tags: [],
         visible: true,
         // computed properties
@@ -281,7 +273,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.5,
         image: "",
-        color: "#e9fb60",
         tags: [],
         visible: true,
         // computed properties
@@ -304,7 +295,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.7,
         image: "",
-        color: "#60A5FA",
         tags: ["Premium"],
         visible: true,
         // computed properties
@@ -318,7 +308,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -332,7 +321,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -355,7 +343,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -369,7 +356,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -383,7 +369,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -397,7 +382,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -420,7 +404,6 @@ const RAW_CATEGORIES = [
         badge: "Best Seller",
         rating: 4.9,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -434,7 +417,6 @@ const RAW_CATEGORIES = [
         badge: "Best Seller",
         rating: 4.9,
         image: "/products/Ice Cream Sandwiches/1786348851739-IMG_2110.PNG",
-        color: "#60A5FA",
         tags: ["Premium"],
         visible: true,
         // computed properties
@@ -448,7 +430,6 @@ const RAW_CATEGORIES = [
         badge: "Best Seller",
         rating: 4.9,
         image: "/products/Ice Cream Sandwiches/1786348682940-IMG_2111.PNG",
-        color: "#60A5FA",
         tags: ["Signature"],
         visible: true,
         // computed properties
@@ -471,7 +452,6 @@ const RAW_CATEGORIES = [
         badge: "Best Seller",
         rating: 4.9,
         image: "",
-        color: "#60A5FA",
         tags: ["Signature"],
         visible: true,
         // computed properties
@@ -485,7 +465,6 @@ const RAW_CATEGORIES = [
         badge: "Limited",
         rating: 4.9,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -499,7 +478,6 @@ const RAW_CATEGORIES = [
         badge: "Popular",
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -522,7 +500,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -536,7 +513,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -550,7 +526,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -573,7 +548,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -587,7 +561,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.9,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -610,7 +583,6 @@ const RAW_CATEGORIES = [
         badge: "Limited",
         rating: 4.8,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -624,7 +596,6 @@ const RAW_CATEGORIES = [
         badge: "Limited",
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: ["Premium"],
         visible: true,
         // computed properties
@@ -638,7 +609,6 @@ const RAW_CATEGORIES = [
         badge: "Popular",
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: ["Premium"],
         visible: true,
         // computed properties
@@ -652,7 +622,6 @@ const RAW_CATEGORIES = [
         badge: "Popular",
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: ["Premium"],
         visible: true,
         // computed properties
@@ -666,7 +635,6 @@ const RAW_CATEGORIES = [
         badge: "Limited",
         rating: 4.9,
         image: "",
-        color: "#60A5FA",
         tags: ["Exotic"],
         visible: true,
         // computed properties
@@ -680,7 +648,6 @@ const RAW_CATEGORIES = [
         badge: "Popular",
         rating: 4.8,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -694,7 +661,6 @@ const RAW_CATEGORIES = [
         badge: "Popular",
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -717,7 +683,6 @@ const RAW_CATEGORIES = [
         badge: "Best Seller",
         rating: 4.9,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -731,7 +696,6 @@ const RAW_CATEGORIES = [
         badge: "Best Seller",
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -745,7 +709,6 @@ const RAW_CATEGORIES = [
         badge: "Best Seller",
         rating: 4.9,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -759,7 +722,6 @@ const RAW_CATEGORIES = [
         badge: null,
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -773,7 +735,6 @@ const RAW_CATEGORIES = [
         badge: "Best Seller",
         rating: 4.5,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -787,7 +748,6 @@ const RAW_CATEGORIES = [
         badge: "Best Seller",
         rating: 4.9,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
@@ -801,7 +761,6 @@ const RAW_CATEGORIES = [
         badge: "Best Seller",
         rating: 4.9,
         image: "",
-        color: "#60A5FA",
         tags: [],
         visible: true,
         // computed properties
