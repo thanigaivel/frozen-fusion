@@ -2,7 +2,7 @@ import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 
 export interface ProductDoc {
-  _id?: string;
+  _id?: ObjectId;
   name: string;
   categoryId: string;
   categoryName: string;
@@ -17,41 +17,115 @@ export interface ProductDoc {
   updatedAt: Date;
 }
 
+/**
+ * Get products
+ *
+ * Optional categoryId filter.
+ */
 export async function getProducts(categoryId?: string) {
   const client = await clientPromise;
   const db = client.db("frozenfusion");
-  const query = categoryId ? { categoryId } : {};
-  const docs = await db.collection<ProductDoc>("products").find(query).sort({ createdAt: -1 }).toArray();
-  return docs.map((d) => ({ ...d, _id: d._id?.toString() }));
+
+  const query = categoryId
+    ? { categoryId }
+    : {};
+
+  const docs = await db
+    .collection<ProductDoc>("products")
+    .find(query)
+    .project({
+      name: 1,
+      categoryId: 1,
+      categoryName: 1,
+      description: 1,
+      badge: 1,
+      rating: 1,
+      image: 1,
+      color: 1,
+      tags: 1,
+      visible: 1,
+      createdAt: 1,
+    })
+    .sort({ createdAt: -1 })
+    .toArray();
+
+  return docs.map((doc) => ({
+    ...doc,
+    _id: doc._id?.toString(),
+  }));
 }
 
-export async function createProduct(data: Omit<ProductDoc, "_id" | "createdAt" | "updatedAt">) {
+/**
+ * Create product
+ */
+export async function createProduct(
+  data: Omit<ProductDoc, "_id" | "createdAt" | "updatedAt">
+) {
   const client = await clientPromise;
   const db = client.db("frozenfusion");
+
   const now = new Date();
+
   const result = await db.collection<ProductDoc>("products").insertOne({
     ...data,
     createdAt: now,
     updatedAt: now,
   });
+
   return result.insertedId.toString();
 }
 
-export async function updateProduct(id: string, data: Partial<ProductDoc>) {
+/**
+ * Update product
+ */
+export async function updateProduct(
+  id: string,
+  data: Partial<Omit<ProductDoc, "_id" | "createdAt" | "updatedAt">>
+) {
   const client = await clientPromise;
   const db = client.db("frozenfusion");
+
+  if (!ObjectId.isValid(id)) {
+    throw new Error("Invalid product ID");
+  }
+
   await db.collection<ProductDoc>("products").updateOne(
-    { _id: new ObjectId(id) as unknown as string },
-    { $set: { ...data, updatedAt: new Date() } }
+    {
+      _id: new ObjectId(id),
+    },
+    {
+      $set: {
+        ...data,
+        updatedAt: new Date(),
+      },
+    }
   );
 }
 
+/**
+ * Delete product
+ */
 export async function deleteProduct(id: string) {
   const client = await clientPromise;
   const db = client.db("frozenfusion");
-  await db.collection<ProductDoc>("products").deleteOne({ _id: new ObjectId(id) as unknown as string });
+
+  if (!ObjectId.isValid(id)) {
+    throw new Error("Invalid product ID");
+  }
+
+  await db.collection<ProductDoc>("products").deleteOne({
+    _id: new ObjectId(id),
+  });
 }
 
-export async function toggleProductVisibility(id: string, visible: boolean) {
-  return updateProduct(id, { visible });
+/**
+ * Toggle product visibility
+ */
+export async function toggleProductVisibility(
+  id: string,
+  visible: boolean
+) {
+  return updateProduct(id, {
+    visible,
+  });
 }
