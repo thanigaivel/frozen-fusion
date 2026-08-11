@@ -84,8 +84,13 @@ function ProductCard({
   onToggleFavorite: (id: string, name?: string) => void;
 }) {
   const [hovered, setHovered] = useState(false);
+  const [imgSrc, setImgSrc] = useState(product.image || "/logo.png");
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-5%" });
+
+  useEffect(() => {
+    setImgSrc(product.image || "/logo.png");
+  }, [product.image]);
 
   return (
     <motion.div
@@ -110,10 +115,11 @@ function ProductCard({
       {/* Image */}
       <div className="relative h-44 overflow-hidden">
         <Image
-          src={product.image || "/logo.png"}
+          src={imgSrc}
           alt={product.name}
           fill
           unoptimized
+          onError={() => setImgSrc("/logo.png")}
           className="object-cover transition-transform duration-700 group-hover:scale-110"
           sizes="220px"
         />

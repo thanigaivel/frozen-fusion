@@ -1,28 +1,31 @@
 import { NextResponse } from "next/server";
 import { getProducts, createProduct } from "@/lib/products-db";
-import { v2 as cloudinary } from "cloudinary";
-
-const cloudinaryUrl = process.env.CLOUDINARY_URL || "";
-const match = cloudinaryUrl.match(/cloudinary:\/\/([^:]+):([^@]+)@(.+)/);
-if (match) {
-  cloudinary.config({
-    api_key: match[1],
-    api_secret: match[2],
-    cloud_name: match[3]
-  });
-}
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 export const dynamic = "force-dynamic";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: corsHeaders,
+  });
+}
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const categoryId = searchParams.get("categoryId") || undefined;
     const products = await getProducts(categoryId);
-    return NextResponse.json({ success: true, data: products });
-  } catch (error) {
+    return NextResponse.json({ success: true, data: products }, { headers: corsHeaders });
+  } catch (error: any) {
     console.error("[PRODUCTS GET ERROR]", error);
-    return NextResponse.json({ error: "Failed to fetch products." }, { status: 500 });
+    return NextResponse.json({ error: error?.message || "Failed to fetch products." }, { status: 500, headers: corsHeaders });
   }
 }
 
@@ -40,31 +43,23 @@ export async function POST(request: Request) {
     const visible = formData.get("visible") !== "false";
     const file = formData.get("image") as File | null;
     
-    let imageUrl = formData.get("imageUrl") as string || "";
+    let imageUrl = (formData.get("imageUrl") as string) || "";
 
     if (!name || !categoryId || !categoryName) {
-      return NextResponse.json({ error: "name, categoryId, and categoryName are required." }, { status: 400 });
+      return NextResponse.json({ error: "name, categoryId, and categoryName are required." }, { status: 400, headers: corsHeaders });
     }
 
     if (file && file.size > 0) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
       try {
-        const uploadResult = await new Promise<any>((resolve, reject) => {
-          const uploadStream = cloudinary.uploader.upload_stream(
-            { folder: `frozen-fusion/products/${categoryName}` },
-            (error, result) => {
-              if (error) reject(error);
-              else resolve(result);
-            }
-          );
-          uploadStream.end(buffer);
-        });
-        imageUrl = uploadResult.secure_url;
-      } catch (uploadError) {
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        imageUrl = await uploadToCloudinary(buffer, categoryName);
+      } catch (uploadError: any) {
         console.error("Cloudinary Upload Error:", uploadError);
-        return NextResponse.json({ error: "Failed to upload image to cloud." }, { status: 500 });
+        return NextResponse.json(
+          { error: `Cloudinary upload failed: ${uploadError?.message || "Unknown error"}` },
+          { status: 500, headers: corsHeaders }
+        );
       }
     }
 
@@ -81,9 +76,12 @@ export async function POST(request: Request) {
       visible,
     });
 
-    return NextResponse.json({ success: true, id }, { status: 201 });
-  } catch (error) {
+    return NextResponse.json({ success: true, id, imageUrl }, {
+      status: 201,
+      headers: corsHeaders,
+    });
+  } catch (error: any) {
     console.error("[PRODUCTS POST ERROR]", error);
-    return NextResponse.json({ error: "Failed to create product." }, { status: 500 });
+    return NextResponse.json({ error: error?.message || "Failed to create product." }, { status: 500, headers: corsHeaders });
   }
 }

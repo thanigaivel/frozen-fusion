@@ -156,39 +156,50 @@ export default function AdminProductsPage() {
         formData.append("imageUrl", form.image);
       }
 
+      let res: Response;
+
       if (editProduct) {
-        // Edit currently only updates the database, not files, but we can send JSON for simple edits if imageFile is null.
-        // For simplicity, we just use PATCH for metadata edits. If they want to upload a new image on edit, 
-        // we would need to update the PATCH endpoint to handle FormData.
-        // Here we just use JSON for edits since we didn't upgrade the PATCH endpoint yet.
-        await fetch(`/api/products/${editProduct._id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: form.name.trim(),
-            categoryId: form.categoryId,
-            categoryName: cat.name,
-            description: form.description.trim(),
-            badge: form.badge || null,
-            rating: Number(form.rating),
-            color: form.color,
-            tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
-            visible: form.visible,
-          }),
-        });
-        showToast(`"${form.name}" updated successfully.`);
+        if (form.imageFile) {
+          res = await fetch(`/api/products/${editProduct._id}`, {
+            method: "PATCH",
+            body: formData,
+          });
+        } else {
+          res = await fetch(`/api/products/${editProduct._id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: form.name.trim(),
+              categoryId: form.categoryId,
+              categoryName: cat.name,
+              description: form.description.trim(),
+              badge: form.badge || null,
+              rating: Number(form.rating),
+              color: form.color,
+              image: form.image,
+              tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+              visible: form.visible,
+            }),
+          });
+        }
       } else {
-        await fetch("/api/products", {
+        res = await fetch("/api/products", {
           method: "POST",
-          body: formData, // Send as FormData
+          body: formData,
         });
-        showToast(`"${form.name}" added successfully.`);
       }
 
+      const json = await res.json();
+      if (!res.ok || json.error) {
+        throw new Error(json.error || "Failed to save product.");
+      }
+
+      showToast(`"${form.name}" ${editProduct ? "updated" : "added"} successfully.`);
       setShowForm(false);
       fetchProducts();
-    } catch {
-      showToast("Something went wrong.");
+    } catch (err: any) {
+      console.error(err);
+      showToast(err?.message || "Something went wrong.");
     } finally {
       setSubmitting(false);
     }
