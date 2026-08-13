@@ -155,6 +155,23 @@ function BadgePill({ badge }: { badge: string }) {
   );
 }
 
+/* ─── Product Image Fallback ──────────────────────────────────── */
+
+function getProductImage(product: Product): string {
+  // `image` is the canonical field.
+  // `imageUrl` is kept only as a temporary fallback for older
+  // MongoDB documents while the database is being cleaned up.
+  const legacyProduct = product as Product & {
+    imageUrl?: string;
+  };
+
+  return (
+    product.image ||
+    legacyProduct.imageUrl ||
+    "/logo.png"
+  );
+}
+
 /* ─── Product Card ────────────────────────────────────────────── */
 
 function ProductCard({
@@ -173,7 +190,7 @@ function ProductCard({
   const [hovered, setHovered] = useState(false);
 
   const imageUrl = getOptimizedImageUrl(
-    product.image,
+    getProductImage(product),
     500
   );
 
@@ -621,7 +638,7 @@ function FlavorModal({
           <div className="relative md:w-1/2 h-80 md:h-auto flex-shrink-0 overflow-hidden">
             <Image
               src={getOptimizedImageUrl(
-                product.image,
+                getProductImage(product),
                 1200
               )}
               alt={product.name}
@@ -733,7 +750,7 @@ function FlavorModal({
                         >
                           <Image
                             src={getOptimizedImageUrl(
-                              rp.image,
+                              getProductImage(rp),
                               150
                             )}
                             alt={rp.name}

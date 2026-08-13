@@ -10,8 +10,7 @@ export const dynamic = "force-dynamic";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods":
-    "GET, POST, PATCH, DELETE, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
   "Access-Control-Allow-Headers":
     "Content-Type, Authorization, X-Requested-With",
 };
@@ -30,19 +29,6 @@ export async function PATCH(
   try {
     const { id } = await params;
 
-    if (!id) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Product ID is required.",
-        },
-        {
-          status: 400,
-          headers: corsHeaders,
-        }
-      );
-    }
-
     const contentType =
       request.headers.get("content-type") || "";
 
@@ -52,41 +38,32 @@ export async function PATCH(
     // MULTIPART FORM DATA
     // =========================================================
 
-    if (
-      contentType.includes("multipart/form-data")
-    ) {
-      const formData =
-        await request.formData();
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await request.formData();
 
-      const file =
-        formData.get("image") as File | null;
+      const file = formData.get("image");
 
       const categoryName =
         (formData.get("categoryName") as string) ||
         "general";
 
-      // Read form fields
+      // -------------------------------------------------------
+      // Read normal fields
+      // -------------------------------------------------------
+
       formData.forEach((value, key) => {
-        // Image is handled separately
+        // NEVER directly update image from the form.
+        //
+        // The image field must only be changed after:
+        // 1. A real file is uploaded
+        // 2. OR a valid imageUrl is supplied
+        //
         if (key === "image") {
           return;
         }
 
-        /*
-         * IMPORTANT:
-         * Ignore imageUrl coming from the frontend.
-         *
-         * We will generate imageUrl from the NEW
-         * Cloudinary URL below.
-         */
-        if (key === "imageUrl") {
-          return;
-        }
-
         if (key === "rating") {
-          const rating = parseFloat(
-            value as string
-          );
+          const rating = parseFloat(value as string);
 
           if (!Number.isNaN(rating)) {
             updateData.rating = rating;
@@ -114,14 +91,28 @@ export async function PATCH(
           return;
         }
 
+        // -----------------------------------------------------
+        // IMPORTANT:
+        // imageUrl is handled separately below.
+        // -----------------------------------------------------
+
+        if (key === "imageUrl") {
+          return;
+        }
+
         updateData[key] = value;
       });
 
       // =======================================================
-      // UPLOAD NEW IMAGE
+      // IMAGE HANDLING
       // =======================================================
 
-      if (file && file.size > 0) {
+      // Check if an actual file was uploaded.
+      const hasFile =
+        file instanceof File &&
+        file.size > 0;
+
+      if (hasFile) {
         console.log(
           "[PRODUCTS PATCH] New image received"
         );
@@ -144,33 +135,29 @@ export async function PATCH(
           const buffer =
             Buffer.from(bytes);
 
-          const newImageUrl =
+          const cloudinaryUrl =
             await uploadToCloudinary(
               buffer,
               categoryName
             );
 
-          if (!newImageUrl) {
-            throw new Error(
-              "Cloudinary did not return an image URL."
-            );
-          }
-
           console.log(
             "[PRODUCTS PATCH] NEW CLOUDINARY URL:",
-            newImageUrl
+            cloudinaryUrl
           );
 
-          /*
-           * IMPORTANT
-           *
-           * Keep both fields synchronized.
-           */
-          updateData.image =
-            newImageUrl;
+          // ---------------------------------------------------
+          // IMPORTANT:
+          // Save the URL into `image`.
+          // ---------------------------------------------------
 
+          updateData.image =
+            cloudinaryUrl;
+
+          // Optional backward compatibility.
+          // This keeps old frontend/admin code working.
           updateData.imageUrl =
-            newImageUrl;
+            cloudinaryUrl;
         } catch (uploadError: any) {
           console.error(
             "[PRODUCTS PATCH] Cloudinary Upload Error:",
@@ -179,8 +166,8 @@ export async function PATCH(
 
           return NextResponse.json(
             {
-              success: false,
-              error: `Cloudinary upload failed: ${uploadError?.message ||
+              error:
+                `Cloudinary upload failed: ${uploadError?.message ||
                 "Unknown error"
                 }`,
             },
@@ -190,69 +177,89 @@ export async function PATCH(
             }
           );
         }
-      }
-    } else {
-      // =======================================================
-      // JSON UPDATE
-      // =======================================================
+      } else {
+        // =====================================================
+        // NO NEW IMAGE
+        // =====================================================
 
-      updateData =
-        await request.json();
+        const submittedImageUrl =
+          formData.get("imageUrl");
+
+        /*
+         * If admin sends an existing image URL,
+         * use it as the canonical `image` value.
+         *
+         * This fixes your current products where:
+         *
+         * image: ""
+         * imageUrl: "https://..."
+         */
+
+        if (
+          typeof submittedImageUrl === "string" &&
+          submittedImageUrl.trim() !== ""
+        ) {
+          updateData.image =
+            submittedImageUrl.trim();
+
+          updateData.imageUrl =
+            submittedImageUrl.trim();
+
+          console.log(
+            "[PRODUCTS PATCH] Existing image URL preserved:",
+            submittedImageUrl
+          );
+        } else {
+          /*
+           * IMPORTANT:
+           *
+           * Do NOT send image: "".
+           *
+           * If the admin is only changing the description,
+           * MongoDB must keep the existing image.
+           */
+          delete updateData.image;
+          delete updateData.imageUrl;
+
+          console.log(
+            "[PRODUCTS PATCH] No image change"
+          );
+        }
+      }
+    }
+
+    // =========================================================
+    // JSON REQUEST
+    // =========================================================
+
+    else {
+      updateData = await request.json();
 
       /*
-       * If JSON contains image but imageUrl is missing,
-       * keep both fields synchronized.
+       * If JSON contains imageUrl but not image,
+       * normalize it to image.
        */
-      if (
-        updateData.image &&
-        !updateData.imageUrl
-      ) {
-        updateData.imageUrl =
-          updateData.image;
-      }
 
-      /*
-       * If frontend sends imageUrl as the new URL,
-       * synchronize image as well.
-       */
       if (
-        updateData.imageUrl &&
-        !updateData.image
+        (!updateData.image ||
+          updateData.image === "") &&
+        typeof updateData.imageUrl === "string" &&
+        updateData.imageUrl.trim() !== ""
       ) {
         updateData.image =
-          updateData.imageUrl;
+          updateData.imageUrl.trim();
+      }
+
+      /*
+       * Never allow an empty image to overwrite
+       * an existing valid image.
+       */
+      if (
+        updateData.image === ""
+      ) {
+        delete updateData.image;
       }
     }
-
-    // =========================================================
-    // VALIDATE
-    // =========================================================
-
-    if (
-      Object.keys(updateData).length === 0
-    ) {
-      return NextResponse.json(
-        {
-          success: false,
-          error:
-            "No fields provided for update.",
-        },
-        {
-          status: 400,
-          headers: corsHeaders,
-        }
-      );
-    }
-
-    console.log(
-      "[PRODUCTS PATCH] Product ID:",
-      id
-    );
-
-    console.log(
-      "[PRODUCTS PATCH] Fields:",
-      Object.keys(updateData)
-    );
 
     // =========================================================
     // VISIBILITY ONLY
@@ -266,10 +273,32 @@ export async function PATCH(
         id,
         updateData.visible
       );
-    } else {
-      // =======================================================
-      // UPDATE MONGODB
-      // =======================================================
+    }
+
+    // =========================================================
+    // NORMAL UPDATE
+    // =========================================================
+
+    else {
+      console.log(
+        "===================================="
+      );
+
+      console.log(
+        "[PRODUCTS PATCH] Updating product:",
+        id
+      );
+
+      console.log(
+        "[PRODUCTS PATCH] Fields:",
+        Object.keys(updateData)
+      );
+
+      console.log(
+        "[PRODUCTS PATCH] Image:",
+        updateData.image ||
+        "NO IMAGE CHANGE"
+      );
 
       await updateProduct(
         id,
@@ -277,28 +306,17 @@ export async function PATCH(
       );
     }
 
-    console.log(
-      "[PRODUCTS PATCH] MongoDB update completed for",
-      id
-    );
+    // =========================================================
+    // RESPONSE
+    // =========================================================
 
     return NextResponse.json(
       {
         success: true,
-        id,
         data: updateData,
-        imageUrl:
-          updateData.imageUrl ||
-          updateData.image ||
-          null,
       },
       {
-        status: 200,
-        headers: {
-          ...corsHeaders,
-          "Cache-Control":
-            "no-store, no-cache, must-revalidate",
-        },
+        headers: corsHeaders,
       }
     );
   } catch (error: any) {
@@ -309,7 +327,6 @@ export async function PATCH(
 
     return NextResponse.json(
       {
-        success: false,
         error:
           error?.message ||
           "Failed to update product.",
@@ -323,33 +340,15 @@ export async function PATCH(
 }
 
 // =============================================================
-// DELETE PRODUCT
+// DELETE
 // =============================================================
 
 export async function DELETE(
   _: Request,
-  {
-    params,
-  }: {
-    params: Promise<{ id: string }>;
-  }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-
-    if (!id) {
-      return NextResponse.json(
-        {
-          success: false,
-          error:
-            "Product ID is required.",
-        },
-        {
-          status: 400,
-          headers: corsHeaders,
-        }
-      );
-    }
 
     await deleteProduct(id);
 
@@ -358,7 +357,6 @@ export async function DELETE(
         success: true,
       },
       {
-        status: 200,
         headers: corsHeaders,
       }
     );
@@ -370,7 +368,6 @@ export async function DELETE(
 
     return NextResponse.json(
       {
-        success: false,
         error:
           error?.message ||
           "Failed to delete product.",
