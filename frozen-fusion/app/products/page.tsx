@@ -206,8 +206,8 @@ function ProductCard({
         width: 220,
         background: "rgba(255,255,255,0.04)",
         border: `1px solid ${hovered
-            ? product.color + "50"
-            : "rgba(255,255,255,0.08)"
+          ? product.color + "50"
+          : "rgba(255,255,255,0.08)"
           }`,
         boxShadow: hovered
           ? `0 0 25px ${glow}, 0 12px 35px rgba(0,0,0,0.45)`
@@ -251,8 +251,8 @@ function ProductCard({
               ? product.color + "40"
               : "rgba(0,0,0,0.4)",
             border: `1px solid ${isFavorite
-                ? product.color + "60"
-                : "rgba(255,255,255,0.15)"
+              ? product.color + "60"
+              : "rgba(255,255,255,0.15)"
               }`,
             color: isFavorite
               ? product.color
@@ -1098,24 +1098,74 @@ export default function ProductsPage() {
   useEffect(() => {
     let cancelled = false;
 
-    async function loadProducts() {
-      try {
-        const adminUrl =
-          process.env
-            .NEXT_PUBLIC_ADMIN_URL;
+    const CACHE_KEY = "frozenfusion_products_cache";
 
-        const url = adminUrl
-          ? `${adminUrl}/api/products`
-          : "http://localhost:3001/api/products";
+    async function loadProducts() {
+      const adminUrl =
+        process.env.NEXT_PUBLIC_ADMIN_URL;
+
+      const url = adminUrl
+        ? `${adminUrl}/api/products`
+        : "http://localhost:3001/api/products";
+
+      // =========================================================
+      // 1. SHOW LOCAL CACHE IMMEDIATELY
+      // =========================================================
+
+      let hasCachedProducts = false;
+
+      try {
+        const cached =
+          localStorage.getItem(CACHE_KEY);
+
+        if (cached) {
+          const parsed = JSON.parse(cached);
+
+          if (
+            Array.isArray(parsed) &&
+            parsed.length > 0
+          ) {
+            console.log(
+              "[PRODUCTS] Showing cached products immediately"
+            );
+
+            setFetchedProducts(parsed);
+
+            setLoadingProducts(false);
+
+            hasCachedProducts = true;
+          }
+        }
+      } catch (error) {
+        console.warn(
+          "[PRODUCTS] Failed to read local cache:",
+          error
+        );
+      }
+
+      // =========================================================
+      // 2. FETCH FRESH DATA IN BACKGROUND
+      // =========================================================
+
+      try {
+        console.log(
+          "[PRODUCTS] Fetching latest products..."
+        );
 
         /*
-         * Browser cache:
-         * Products don't change every second.
+         * Date query parameter prevents the browser/proxy
+         * from returning an old /api/products response.
+         *
+         * We are NOT removing caching of product IMAGES.
+         * Cloudinary image optimization remains enabled.
          */
+        const freshUrl =
+          `${url}?_=${Date.now()}`;
+
         const res = await fetch(
-          url,
+          freshUrl,
           {
-            cache: "force-cache",
+            cache: "no-store",
           }
         );
 
@@ -1129,62 +1179,83 @@ export default function ProductsPage() {
           await res.json();
 
         if (
-          !cancelled &&
-          json.success &&
-          Array.isArray(json.data)
+          !json.success ||
+          !Array.isArray(json.data)
         ) {
-          const mapped: Product[] =
-            json.data.map(
-              (p: any) => ({
-                ...p,
+          throw new Error(
+            "Invalid products API response"
+          );
+        }
 
-                id:
-                  p._id ||
-                  p.id,
+        // =======================================================
+        // 3. MAP PRODUCTS
+        // =======================================================
 
-                /*
-                 * Your MongoDB field is
-                 * categoryName while the
-                 * existing UI uses category.
-                 */
-                category:
-                  p.category ||
-                  p.categoryName ||
-                  "",
+        const mapped: Product[] =
+          json.data.map((p: any) => ({
+            ...p,
 
-                glow:
-                  p.glow ||
-                  `${p.color || "#FF6BD6"}50`,
-              })
-            );
+            id:
+              p._id ||
+              p.id,
 
-          setFetchedProducts(
-            mapped
+            /*
+             * Your MongoDB field is categoryName,
+             * while the existing UI uses category.
+             */
+            category:
+              p.category ||
+              p.categoryName ||
+              "",
+
+            glow:
+              p.glow ||
+              `${p.color || "#FF6BD6"}50`,
+          }));
+
+        if (!cancelled) {
+          // =====================================================
+          // 4. UPDATE SCREEN WITH FRESH DATA
+          // =====================================================
+
+          setFetchedProducts(mapped);
+
+          setLoadingProducts(false);
+        }
+
+        // =======================================================
+        // 5. SAVE FRESH DATA TO LOCAL CACHE
+        // =======================================================
+
+        try {
+          localStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify(mapped)
+          );
+
+          console.log(
+            "[PRODUCTS] Fresh products saved to local cache"
+          );
+        } catch (cacheError) {
+          console.warn(
+            "[PRODUCTS] Failed to save products cache:",
+            cacheError
           );
         }
       } catch (error) {
         console.error(
-          "Failed to fetch dynamic products, using fallback data:",
+          "[PRODUCTS] Failed to fetch latest products:",
           error
         );
 
-        if (!cancelled) {
-          /*
-           * Fallback to the products already
-           * present inside CATEGORIES.
-           */
-          const fallback =
-            CATEGORIES.flatMap(
-              (category) =>
-                category.products
-            );
-
-          setFetchedProducts(
-            fallback
-          );
-        }
-      } finally {
-        if (!cancelled) {
+        /*
+         * If cached products are already displayed,
+         * KEEP THEM on screen.
+         *
+         * This prevents the user from seeing a loading/error
+         * screen just because the API is temporarily slow.
+         */
+        if (!cancelled && !hasCachedProducts) {
           setLoadingProducts(false);
         }
       }
