@@ -78,67 +78,70 @@ export function getCloudinaryPublicId(
       return null;
     }
 
-    if (
-      !imageUrl.includes("res.cloudinary.com") ||
-      !imageUrl.includes("/upload/")
-    ) {
-      return null;
-    }
+    const url = new URL(imageUrl);
 
-    const uploadPart =
-      imageUrl.split("/upload/")[1];
+    // Example:
+    // /pkdupslt/image/upload/v1786592348/
+    // frozen-fusion/products/Kulfi_Varieties/file.jpg
 
-    if (!uploadPart) {
-      return null;
-    }
+    const uploadIndex =
+      url.pathname.indexOf("/upload/");
 
-    const parts = uploadPart.split("/");
-
-    /*
-     * Find the Cloudinary version:
-     *
-     * v1786602553
-     */
-    const versionIndex =
-      parts.findIndex((part) =>
-        /^v\d+$/.test(part)
+    if (uploadIndex === -1) {
+      console.error(
+        "[CLOUDINARY] /upload/ not found in URL:",
+        imageUrl
       );
 
-    let publicIdParts: string[];
-
-    if (versionIndex !== -1) {
-      publicIdParts =
-        parts.slice(versionIndex + 1);
-    } else {
-      /*
-       * If there is no version, remove possible
-       * transformation segments as best as possible.
-       */
-      publicIdParts = parts;
-    }
-
-    if (publicIdParts.length === 0) {
       return null;
     }
 
-    let publicId =
-      publicIdParts.join("/");
+    // Everything after /upload/
+    let path =
+      url.pathname.substring(
+        uploadIndex + "/upload/".length
+      );
+
+    console.log(
+      "[CLOUDINARY] Path after /upload/:",
+      path
+    );
+
+    const parts = path.split("/");
+
+    /*
+     * Remove Cloudinary version:
+     *
+     * v1786592348
+     */
+    if (
+      parts.length > 0 &&
+      /^v\d+$/.test(parts[0])
+    ) {
+      parts.shift();
+    }
 
     /*
      * Remove file extension.
-     *
-     * test.jpg → test
      */
+    let publicId =
+      parts.join("/");
+
     publicId =
       publicId.replace(
         /\.(jpg|jpeg|png|webp|gif|avif)$/i,
         ""
       );
 
+    console.log(
+      "[CLOUDINARY] Extracted Public ID:",
+      publicId
+    );
+
     return publicId || null;
   } catch (error) {
     console.error(
-      "[CLOUDINARY] Failed to extract public ID:",
+      "[CLOUDINARY] Public ID extraction failed:",
       error
     );
 
@@ -146,20 +149,30 @@ export function getCloudinaryPublicId(
   }
 }
 
-/**
- * Delete an image from Cloudinary.
- */
+
 export async function deleteFromCloudinary(
   imageUrl: string
 ): Promise<boolean> {
   try {
+    console.log(
+      "========================================"
+    );
+
+    console.log(
+      "[CLOUDINARY DELETE] Starting..."
+    );
+
+    console.log(
+      "[CLOUDINARY DELETE] URL:",
+      imageUrl
+    );
+
     const publicId =
       getCloudinaryPublicId(imageUrl);
 
     if (!publicId) {
-      console.log(
-        "[CLOUDINARY DELETE] Invalid or non-Cloudinary URL:",
-        imageUrl
+      console.error(
+        "[CLOUDINARY DELETE] Could not determine public ID"
       );
 
       return false;
@@ -181,21 +194,44 @@ export async function deleteFromCloudinary(
       );
 
     console.log(
-      "[CLOUDINARY DELETE] Result:",
-      result
+      "[CLOUDINARY DELETE] Cloudinary response:",
+      JSON.stringify(result)
     );
 
-    return (
-      result.result === "ok" ||
-      result.result === "not found"
+    if (result.result === "ok") {
+      console.log(
+        "[CLOUDINARY DELETE] SUCCESS - Old image deleted"
+      );
+
+      return true;
+    }
+
+    if (result.result === "not found") {
+      console.warn(
+        "[CLOUDINARY DELETE] Asset not found:",
+        publicId
+      );
+
+      return false;
+    }
+
+    console.error(
+      "[CLOUDINARY DELETE] Unexpected result:",
+      result.result
     );
+
+    return false;
   } catch (error) {
     console.error(
-      "[CLOUDINARY DELETE ERROR]",
+      "[CLOUDINARY DELETE] ERROR:",
       error
     );
 
     return false;
+  } finally {
+    console.log(
+      "========================================"
+    );
   }
 }
 
