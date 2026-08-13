@@ -24,7 +24,7 @@ interface Product {
 const CATEGORIES = [
   { id: "milk-popsicles",  name: "Premium Popsicle",   icon: "🥛" },
   { id: "kulfi",           name: "Kulfi Varieties",           icon: "🍨" },
-  { id: "fruit-shaped",    name: "Fruit Shaped Ice Cream",   icon: "🍉" },
+  { id: "fruit-shaped",    name: "Viral Trending Dessert",   icon: "🍉" },
   { id: "scoops",          name: "Classic Ice Creams",             icon: "🍦" },
   { id: "sandwiches",      name: "Ice Cream Sandwich & Slices",       icon: "🍪" },
   { id: "shakes",          name: "Thick Shakes",               icon: "🥤" },

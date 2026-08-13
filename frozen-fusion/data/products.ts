@@ -302,29 +302,29 @@ const RAW_CATEGORIES = [
       },
       {
         id: "6a79cb5750a038a1e54aa532",
-        name: "Lemon Fruit Shaped Ice Cream",
+        name: "Lemon Viral Trending Dessert",
         categoryId: "fruit-shaped",
-        description: "Lemon Fruit Shaped Ice Cream",
+        description: "Lemon Viral Trending Dessert",
         badge: null,
         rating: 4.5,
         image: "",
         tags: [],
         visible: true,
         // computed properties
-        ...fc("lemon fruit shaped ice cream")
+        ...fc("lemon viral trending dessert")
       },
       {
         id: "6a79cb4650a038a1e54aa531",
-        name: "Mango Fruit Shaped Ice Cream",
+        name: "Mango Viral Trending Dessert",
         categoryId: "fruit-shaped",
-        description: "Mango Fruit Shaped Ice Cream",
+        description: "Mango Viral Trending Dessert",
         badge: null,
         rating: 4.5,
         image: "",
         tags: [],
         visible: true,
         // computed properties
-        ...fc("mango fruit shaped ice cream")
+        ...fc("mango viral trending dessert")
       }
     ],
   },

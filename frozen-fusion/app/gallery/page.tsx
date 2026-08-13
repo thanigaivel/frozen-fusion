@@ -80,7 +80,7 @@ const DEFAULT_ITEMS: GalleryItem[] = [
   },
   {
     _id: "def-7",
-    title: "On-the-Go Fruit Shaped Ice Cream",
+    title: "On-the-Go Viral Trending Dessert",
     description: "Fun fruit-shaped frozen popsicles loved by kids and adults alike.",
     outletName: "Express EV Cart Outlets",
     outletSlug: "express-ev-cart-outlets",
