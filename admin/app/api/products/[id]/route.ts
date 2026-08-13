@@ -1,16 +1,23 @@
 import { NextResponse } from "next/server";
+
 import {
+  getProductById,
   updateProduct,
   deleteProduct,
   toggleProductVisibility,
 } from "@/lib/products-db";
-import { uploadToCloudinary } from "@/lib/cloudinary";
+
+import {
+  uploadToCloudinary,
+  deleteFromCloudinary,
+} from "@/lib/cloudinary";
 
 export const dynamic = "force-dynamic";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+  "Access-Control-Allow-Methods":
+    "GET, POST, PATCH, DELETE, OPTIONS",
   "Access-Control-Allow-Headers":
     "Content-Type, Authorization, X-Requested-With",
 };
@@ -22,97 +29,151 @@ export async function OPTIONS() {
   });
 }
 
+// ============================================================
+// PATCH PRODUCT
+// ============================================================
+
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  let newUploadedImageUrl: string | null = null;
+
   try {
     const { id } = await params;
+
+    console.log(
+      "===================================="
+    );
+
+    console.log(
+      "[PRODUCTS PATCH] Product ID:",
+      id
+    );
+
+    // ========================================================
+    // GET CURRENT PRODUCT
+    // ========================================================
+
+    const existingProduct =
+      await getProductById(id);
+
+    if (!existingProduct) {
+      return NextResponse.json(
+        {
+          error: "Product not found.",
+        },
+        {
+          status: 404,
+          headers: corsHeaders,
+        }
+      );
+    }
+
+    const oldImageUrl =
+      existingProduct.image || "";
+
+    console.log(
+      "[PRODUCTS PATCH] Existing image:",
+      oldImageUrl || "NO IMAGE"
+    );
 
     const contentType =
       request.headers.get("content-type") || "";
 
     let updateData: Record<string, any> = {};
 
-    // =========================================================
+    // ========================================================
     // MULTIPART FORM DATA
-    // =========================================================
+    // ========================================================
 
-    if (contentType.includes("multipart/form-data")) {
-      const formData = await request.formData();
+    if (
+      contentType.includes(
+        "multipart/form-data"
+      )
+    ) {
+      const formData =
+        await request.formData();
 
-      const file = formData.get("image");
+      const file =
+        formData.get("image");
 
       const categoryName =
-        (formData.get("categoryName") as string) ||
-        "general";
+        (formData.get(
+          "categoryName"
+        ) as string) || "general";
 
-      // -------------------------------------------------------
-      // Read normal fields
-      // -------------------------------------------------------
+      // ======================================================
+      // READ FORM FIELDS
+      // ======================================================
 
-      formData.forEach((value, key) => {
-        // NEVER directly update image from the form.
-        //
-        // The image field must only be changed after:
-        // 1. A real file is uploaded
-        // 2. OR a valid imageUrl is supplied
-        //
-        if (key === "image") {
-          return;
-        }
-
-        if (key === "rating") {
-          const rating = parseFloat(value as string);
-
-          if (!Number.isNaN(rating)) {
-            updateData.rating = rating;
+      formData.forEach(
+        (value, key) => {
+          /*
+           * NEVER directly copy image.
+           *
+           * Image is handled separately below.
+           */
+          if (key === "image") {
+            return;
           }
 
-          return;
-        }
-
-        if (key === "tags") {
-          try {
-            updateData.tags = JSON.parse(
-              value as string
-            );
-          } catch {
-            updateData.tags = [];
+          /*
+           * imageUrl is no longer required.
+           *
+           * We use only `image` in MongoDB.
+           */
+          if (key === "imageUrl") {
+            return;
           }
 
-          return;
+          if (key === "rating") {
+            const rating =
+              parseFloat(
+                value as string
+              );
+
+            if (!Number.isNaN(rating)) {
+              updateData.rating =
+                rating;
+            }
+
+            return;
+          }
+
+          if (key === "tags") {
+            try {
+              updateData.tags =
+                JSON.parse(
+                  value as string
+                );
+            } catch {
+              updateData.tags = [];
+            }
+
+            return;
+          }
+
+          if (key === "visible") {
+            updateData.visible =
+              value !== "false";
+
+            return;
+          }
+
+          updateData[key] = value;
         }
+      );
 
-        if (key === "visible") {
-          updateData.visible =
-            value !== "false";
+      // ======================================================
+      // CHECK FOR NEW IMAGE
+      // ======================================================
 
-          return;
-        }
-
-        // -----------------------------------------------------
-        // IMPORTANT:
-        // imageUrl is handled separately below.
-        // -----------------------------------------------------
-
-        if (key === "imageUrl") {
-          return;
-        }
-
-        updateData[key] = value;
-      });
-
-      // =======================================================
-      // IMAGE HANDLING
-      // =======================================================
-
-      // Check if an actual file was uploaded.
-      const hasFile =
+      const hasNewImage =
         file instanceof File &&
         file.size > 0;
 
-      if (hasFile) {
+      if (hasNewImage) {
         console.log(
           "[PRODUCTS PATCH] New image received"
         );
@@ -128,6 +189,10 @@ export async function PATCH(
           "bytes"
         );
 
+        // ====================================================
+        // UPLOAD NEW IMAGE
+        // ====================================================
+
         try {
           const bytes =
             await file.arrayBuffer();
@@ -135,7 +200,7 @@ export async function PATCH(
           const buffer =
             Buffer.from(bytes);
 
-          const cloudinaryUrl =
+          newUploadedImageUrl =
             await uploadToCloudinary(
               buffer,
               categoryName
@@ -143,24 +208,19 @@ export async function PATCH(
 
           console.log(
             "[PRODUCTS PATCH] NEW CLOUDINARY URL:",
-            cloudinaryUrl
+            newUploadedImageUrl
           );
 
-          // ---------------------------------------------------
-          // IMPORTANT:
-          // Save the URL into `image`.
-          // ---------------------------------------------------
-
+          /*
+           * IMPORTANT:
+           *
+           * MongoDB has only ONE image field.
+           */
           updateData.image =
-            cloudinaryUrl;
-
-          // Optional backward compatibility.
-          // This keeps old frontend/admin code working.
-          updateData.imageUrl =
-            cloudinaryUrl;
+            newUploadedImageUrl;
         } catch (uploadError: any) {
           console.error(
-            "[PRODUCTS PATCH] Cloudinary Upload Error:",
+            "[PRODUCTS PATCH] Cloudinary upload failed:",
             uploadError
           );
 
@@ -178,80 +238,40 @@ export async function PATCH(
           );
         }
       } else {
-        // =====================================================
+        // ====================================================
         // NO NEW IMAGE
-        // =====================================================
-
-        const submittedImageUrl =
-          formData.get("imageUrl");
+        // ====================================================
 
         /*
-         * If admin sends an existing image URL,
-         * use it as the canonical `image` value.
+         * VERY IMPORTANT:
          *
-         * This fixes your current products where:
+         * Do NOT send:
          *
          * image: ""
-         * imageUrl: "https://..."
+         *
+         * when the admin only changes description,
+         * rating, tags, etc.
+         *
+         * MongoDB will therefore preserve the old image.
          */
+        delete updateData.image;
 
-        if (
-          typeof submittedImageUrl === "string" &&
-          submittedImageUrl.trim() !== ""
-        ) {
-          updateData.image =
-            submittedImageUrl.trim();
-
-          updateData.imageUrl =
-            submittedImageUrl.trim();
-
-          console.log(
-            "[PRODUCTS PATCH] Existing image URL preserved:",
-            submittedImageUrl
-          );
-        } else {
-          /*
-           * IMPORTANT:
-           *
-           * Do NOT send image: "".
-           *
-           * If the admin is only changing the description,
-           * MongoDB must keep the existing image.
-           */
-          delete updateData.image;
-          delete updateData.imageUrl;
-
-          console.log(
-            "[PRODUCTS PATCH] No image change"
-          );
-        }
+        console.log(
+          "[PRODUCTS PATCH] No new image - preserving existing image"
+        );
       }
     }
 
-    // =========================================================
+    // ========================================================
     // JSON REQUEST
-    // =========================================================
+    // ========================================================
 
     else {
-      updateData = await request.json();
+      updateData =
+        await request.json();
 
       /*
-       * If JSON contains imageUrl but not image,
-       * normalize it to image.
-       */
-
-      if (
-        (!updateData.image ||
-          updateData.image === "") &&
-        typeof updateData.imageUrl === "string" &&
-        updateData.imageUrl.trim() !== ""
-      ) {
-        updateData.image =
-          updateData.imageUrl.trim();
-      }
-
-      /*
-       * Never allow an empty image to overwrite
+       * Prevent empty image from deleting
        * an existing valid image.
        */
       if (
@@ -261,54 +281,107 @@ export async function PATCH(
       }
     }
 
-    // =========================================================
+    // ========================================================
     // VISIBILITY ONLY
-    // =========================================================
+    // ========================================================
 
     if (
-      updateData.visible !== undefined &&
-      Object.keys(updateData).length === 1
+      updateData.visible !==
+      undefined &&
+      Object.keys(updateData).length ===
+      1
     ) {
       await toggleProductVisibility(
         id,
         updateData.visible
       );
+
+      console.log(
+        "[PRODUCTS PATCH] Visibility updated"
+      );
     }
 
-    // =========================================================
+    // ========================================================
     // NORMAL UPDATE
-    // =========================================================
+    // ========================================================
 
     else {
       console.log(
-        "===================================="
+        "[PRODUCTS DB UPDATE] START"
       );
 
       console.log(
-        "[PRODUCTS PATCH] Updating product:",
+        "[PRODUCTS DB UPDATE] Product ID:",
         id
       );
 
       console.log(
-        "[PRODUCTS PATCH] Fields:",
-        Object.keys(updateData)
+        "[PRODUCTS DB UPDATE] Image:",
+        updateData.image ||
+        "NO IMAGE CHANGE"
       );
 
       console.log(
-        "[PRODUCTS PATCH] Image:",
-        updateData.image ||
-        "NO IMAGE CHANGE"
+        "[PRODUCTS DB UPDATE] Fields:",
+        Object.keys(updateData)
       );
 
       await updateProduct(
         id,
         updateData
       );
+
+      console.log(
+        "[PRODUCTS DB UPDATE] MongoDB update completed"
+      );
     }
 
-    // =========================================================
-    // RESPONSE
-    // =========================================================
+    // ========================================================
+    // DELETE OLD CLOUDINARY IMAGE
+    // ========================================================
+
+    /*
+     * ONLY delete the old image if:
+     *
+     * 1. A new image was uploaded
+     * 2. MongoDB update succeeded
+     * 3. Old image exists
+     * 4. Old and new URLs are different
+     */
+
+    if (
+      newUploadedImageUrl &&
+      oldImageUrl &&
+      oldImageUrl !==
+      newUploadedImageUrl
+    ) {
+      console.log(
+        "[PRODUCTS PATCH] Deleting old Cloudinary image..."
+      );
+
+      const deleted =
+        await deleteFromCloudinary(
+          oldImageUrl
+        );
+
+      if (deleted) {
+        console.log(
+          "[PRODUCTS PATCH] Old Cloudinary image deleted successfully"
+        );
+      } else {
+        console.warn(
+          "[PRODUCTS PATCH] Old Cloudinary image could not be deleted"
+        );
+      }
+    }
+
+    console.log(
+      "[PRODUCTS PATCH] Completed successfully"
+    );
+
+    console.log(
+      "===================================="
+    );
 
     return NextResponse.json(
       {
@@ -325,6 +398,31 @@ export async function PATCH(
       error
     );
 
+    // ========================================================
+    // CLEAN UP NEW IMAGE IF DATABASE UPDATE FAILED
+    // ========================================================
+
+    /*
+     * If Cloudinary upload succeeded but MongoDB failed,
+     * remove the newly uploaded image.
+     *
+     * This prevents unused images accumulating in Cloudinary.
+     */
+
+    if (newUploadedImageUrl) {
+      console.log(
+        "[PRODUCTS PATCH] Database update failed."
+      );
+
+      console.log(
+        "[PRODUCTS PATCH] Cleaning up newly uploaded image..."
+      );
+
+      await deleteFromCloudinary(
+        newUploadedImageUrl
+      );
+    }
+
     return NextResponse.json(
       {
         error:
@@ -339,9 +437,9 @@ export async function PATCH(
   }
 }
 
-// =============================================================
-// DELETE
-// =============================================================
+// ============================================================
+// DELETE PRODUCT
+// ============================================================
 
 export async function DELETE(
   _: Request,
@@ -350,7 +448,40 @@ export async function DELETE(
   try {
     const { id } = await params;
 
+    const existingProduct =
+      await getProductById(id);
+
+    if (!existingProduct) {
+      return NextResponse.json(
+        {
+          error: "Product not found.",
+        },
+        {
+          status: 404,
+          headers: corsHeaders,
+        }
+      );
+    }
+
+    // ========================================================
+    // DELETE PRODUCT FROM MONGODB
+    // ========================================================
+
     await deleteProduct(id);
+
+    // ========================================================
+    // DELETE IMAGE FROM CLOUDINARY
+    // ========================================================
+
+    if (existingProduct.image) {
+      console.log(
+        "[PRODUCT DELETE] Deleting Cloudinary image..."
+      );
+
+      await deleteFromCloudinary(
+        existingProduct.image
+      );
+    }
 
     return NextResponse.json(
       {

@@ -17,61 +17,83 @@ export interface ProductDoc {
   updatedAt: Date;
 }
 
+/**
+ * Get all products.
+ *
+ * If categoryId is provided, only products from
+ * that category are returned.
+ */
 export async function getProducts(
   categoryId?: string
 ) {
   const client = await clientPromise;
 
-  const db =
-    client.db("frozenfusion");
+  const db = client.db("frozenfusion");
 
   const query = categoryId
-    ? {
-      categoryId,
-      visible: true,
-    }
-    : {
-      visible: true,
-    };
+    ? { categoryId }
+    : {};
 
   const docs = await db
     .collection<ProductDoc>("products")
-    .find(query, {
-      projection: {
-        name: 1,
-        categoryId: 1,
-        categoryName: 1,
-        description: 1,
-        badge: 1,
-        rating: 1,
-        image: 1,
-        color: 1,
-        tags: 1,
-        visible: 1,
-      },
-    })
-    .sort({
-      createdAt: -1,
-    })
+    .find(query)
+    .sort({ createdAt: -1 })
     .toArray();
 
-  return docs.map((doc) => ({
-    ...doc,
-    _id: doc._id?.toString(),
+  return docs.map((d) => ({
+    ...d,
+    _id: d._id?.toString(),
   }));
 }
 
+/**
+ * Get a single product by MongoDB ID.
+ *
+ * This is used when updating a product so that
+ * we can remember the OLD Cloudinary image URL
+ * before replacing it with a new image.
+ */
+export async function getProductById(
+  id: string
+) {
+  const client = await clientPromise;
+
+  const db = client.db("frozenfusion");
+
+  // Validate MongoDB ObjectId before querying
+  if (!ObjectId.isValid(id)) {
+    return null;
+  }
+
+  const product =
+    await db
+      .collection<ProductDoc>("products")
+      .findOne({
+        _id: new ObjectId(id) as unknown as string,
+      });
+
+  if (!product) {
+    return null;
+  }
+
+  return {
+    ...product,
+    _id: product._id?.toString(),
+  };
+}
+
+/**
+ * Create a new product.
+ */
 export async function createProduct(
   data: Omit<
     ProductDoc,
     "_id" | "createdAt" | "updatedAt"
   >
 ) {
-  const client =
-    await clientPromise;
+  const client = await clientPromise;
 
-  const db =
-    client.db("frozenfusion");
+  const db = client.db("frozenfusion");
 
   const now = new Date();
 
@@ -87,6 +109,15 @@ export async function createProduct(
   return result.insertedId.toString();
 }
 
+/**
+ * Update an existing product.
+ *
+ * Important:
+ * Only fields provided in `data` are updated.
+ *
+ * Therefore, if `image` is NOT included,
+ * the existing image remains unchanged.
+ */
 export async function updateProduct(
   id: string,
   data: Partial<ProductDoc>
@@ -95,26 +126,19 @@ export async function updateProduct(
 
   const db = client.db("frozenfusion");
 
-  console.log("====================================");
-  console.log("[PRODUCTS DB UPDATE] START");
-  console.log("[PRODUCTS DB UPDATE] Product ID:", id);
-  console.log(
-    "[PRODUCTS DB UPDATE] Image:",
-    data.image || "NO IMAGE"
-  );
+  if (!ObjectId.isValid(id)) {
+    throw new Error(
+      `Invalid product ID: ${id}`
+    );
+  }
 
-  const objectId = new ObjectId(id);
-
-  console.log(
-    "[PRODUCTS DB UPDATE] ObjectId:",
-    objectId.toString()
-  );
-
-  const result = await db
+  await db
     .collection<ProductDoc>("products")
     .updateOne(
       {
-        _id: objectId as unknown as string,
+        _id: new ObjectId(
+          id
+        ) as unknown as string,
       },
       {
         $set: {
@@ -123,50 +147,39 @@ export async function updateProduct(
         },
       }
     );
-
-  console.log(
-    "[PRODUCTS DB UPDATE] matchedCount:",
-    result.matchedCount
-  );
-
-  console.log(
-    "[PRODUCTS DB UPDATE] modifiedCount:",
-    result.modifiedCount
-  );
-
-  console.log(
-    "[PRODUCTS DB UPDATE] acknowledged:",
-    result.acknowledged
-  );
-
-  console.log("[PRODUCTS DB UPDATE] END");
-  console.log("====================================");
-
-  if (result.matchedCount === 0) {
-    throw new Error(
-      `Product ${id} was NOT found in MongoDB`
-    );
-  }
-
-  return result;
 }
 
+/**
+ * Delete a product from MongoDB.
+ *
+ * Cloudinary image deletion is handled separately
+ * in the API route.
+ */
 export async function deleteProduct(
   id: string
 ) {
-  const client =
-    await clientPromise;
+  const client = await clientPromise;
 
-  const db =
-    client.db("frozenfusion");
+  const db = client.db("frozenfusion");
+
+  if (!ObjectId.isValid(id)) {
+    throw new Error(
+      `Invalid product ID: ${id}`
+    );
+  }
 
   await db
     .collection<ProductDoc>("products")
     .deleteOne({
-      _id: new ObjectId(id) as unknown as string,
+      _id: new ObjectId(
+        id
+      ) as unknown as string,
     });
 }
 
+/**
+ * Toggle product visibility.
+ */
 export async function toggleProductVisibility(
   id: string,
   visible: boolean
