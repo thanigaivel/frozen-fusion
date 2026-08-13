@@ -48,101 +48,93 @@ export async function PATCH(
 
     let updateData: Record<string, any> = {};
 
-    /* =========================================================
-       MULTIPART FORM DATA
-       Used when admin uploads a new image
-    ========================================================= */
+    // =========================================================
+    // MULTIPART FORM DATA
+    // =========================================================
 
     if (
-      contentType.includes(
-        "multipart/form-data"
-      )
+      contentType.includes("multipart/form-data")
     ) {
       const formData =
         await request.formData();
 
       const file =
-        formData.get("image") as
-        | File
-        | null;
+        formData.get("image") as File | null;
 
       const categoryName =
-        (formData.get(
-          "categoryName"
-        ) as string) || "general";
+        (formData.get("categoryName") as string) ||
+        "general";
 
-      /* -------------------------------------------------------
-         Read normal form fields
-      ------------------------------------------------------- */
-
-      formData.forEach(
-        (value, key) => {
-          // Image is handled separately below
-          if (key === "image") {
-            return;
-          }
-
-          if (
-            key === "rating"
-          ) {
-            const rating =
-              parseFloat(
-                value as string
-              );
-
-            if (
-              !Number.isNaN(rating)
-            ) {
-              updateData.rating =
-                rating;
-            }
-
-            return;
-          }
-
-          if (key === "tags") {
-            try {
-              updateData.tags =
-                JSON.parse(
-                  value as string
-                );
-            } catch {
-              updateData.tags = [];
-            }
-
-            return;
-          }
-
-          if (key === "visible") {
-            updateData.visible =
-              value !== "false";
-
-            return;
-          }
-
-          updateData[key] =
-            value;
+      // Read form fields
+      formData.forEach((value, key) => {
+        // Image is handled separately
+        if (key === "image") {
+          return;
         }
-      );
 
-      /* -------------------------------------------------------
-         Upload NEW image to Cloudinary
-      ------------------------------------------------------- */
+        /*
+         * IMPORTANT:
+         * Ignore imageUrl coming from the frontend.
+         *
+         * We will generate imageUrl from the NEW
+         * Cloudinary URL below.
+         */
+        if (key === "imageUrl") {
+          return;
+        }
 
-      if (
-        file &&
-        file.size > 0
-      ) {
+        if (key === "rating") {
+          const rating = parseFloat(
+            value as string
+          );
+
+          if (!Number.isNaN(rating)) {
+            updateData.rating = rating;
+          }
+
+          return;
+        }
+
+        if (key === "tags") {
+          try {
+            updateData.tags = JSON.parse(
+              value as string
+            );
+          } catch {
+            updateData.tags = [];
+          }
+
+          return;
+        }
+
+        if (key === "visible") {
+          updateData.visible =
+            value !== "false";
+
+          return;
+        }
+
+        updateData[key] = value;
+      });
+
+      // =======================================================
+      // UPLOAD NEW IMAGE
+      // =======================================================
+
+      if (file && file.size > 0) {
         console.log(
-          `[PRODUCTS PATCH] New image received`
+          "[PRODUCTS PATCH] New image received"
         );
 
         console.log(
-          `[PRODUCTS PATCH] File: ${file.name}`
+          "[PRODUCTS PATCH] File:",
+          file.name
         );
 
         console.log(
-          `[PRODUCTS PATCH] Size: ${file.size} bytes`
+          "[PRODUCTS PATCH] Size:",
+          file.size,
+          "bytes"
         );
 
         try {
@@ -164,20 +156,22 @@ export async function PATCH(
             );
           }
 
+          console.log(
+            "[PRODUCTS PATCH] NEW CLOUDINARY URL:",
+            newImageUrl
+          );
+
           /*
-           * IMPORTANT:
-           * This is the value that will be
-           * stored in MongoDB.
+           * IMPORTANT
+           *
+           * Keep both fields synchronized.
            */
           updateData.image =
             newImageUrl;
 
-          console.log(
-            `[PRODUCTS PATCH] NEW CLOUDINARY URL: ${newImageUrl}`
-          );
-        } catch (
-        uploadError: any
-        ) {
+          updateData.imageUrl =
+            newImageUrl;
+        } catch (uploadError: any) {
           console.error(
             "[PRODUCTS PATCH] Cloudinary Upload Error:",
             uploadError
@@ -198,21 +192,44 @@ export async function PATCH(
         }
       }
     } else {
-      /* =======================================================
-         JSON UPDATE
-      ======================================================= */
+      // =======================================================
+      // JSON UPDATE
+      // =======================================================
 
       updateData =
         await request.json();
+
+      /*
+       * If JSON contains image but imageUrl is missing,
+       * keep both fields synchronized.
+       */
+      if (
+        updateData.image &&
+        !updateData.imageUrl
+      ) {
+        updateData.imageUrl =
+          updateData.image;
+      }
+
+      /*
+       * If frontend sends imageUrl as the new URL,
+       * synchronize image as well.
+       */
+      if (
+        updateData.imageUrl &&
+        !updateData.image
+      ) {
+        updateData.image =
+          updateData.imageUrl;
+      }
     }
 
-    /* =========================================================
-       VALIDATE UPDATE
-    ========================================================= */
+    // =========================================================
+    // VALIDATE
+    // =========================================================
 
     if (
-      Object.keys(updateData)
-        .length === 0
+      Object.keys(updateData).length === 0
     ) {
       return NextResponse.json(
         {
@@ -228,7 +245,8 @@ export async function PATCH(
     }
 
     console.log(
-      `[PRODUCTS PATCH] Product ID: ${id}`
+      "[PRODUCTS PATCH] Product ID:",
+      id
     );
 
     console.log(
@@ -236,25 +254,22 @@ export async function PATCH(
       Object.keys(updateData)
     );
 
-    /* =========================================================
-       VISIBILITY ONLY UPDATE
-    ========================================================= */
+    // =========================================================
+    // VISIBILITY ONLY
+    // =========================================================
 
     if (
-      updateData.visible !==
-      undefined &&
-      Object.keys(updateData)
-        .length === 1
+      updateData.visible !== undefined &&
+      Object.keys(updateData).length === 1
     ) {
       await toggleProductVisibility(
         id,
         updateData.visible
       );
     } else {
-      /* =======================================================
-         NORMAL PRODUCT UPDATE
-         This includes the NEW Cloudinary URL
-      ======================================================= */
+      // =======================================================
+      // UPDATE MONGODB
+      // =======================================================
 
       await updateProduct(
         id,
@@ -263,27 +278,17 @@ export async function PATCH(
     }
 
     console.log(
-      `[PRODUCTS PATCH] MongoDB update completed for ${id}`
+      "[PRODUCTS PATCH] MongoDB update completed for",
+      id
     );
-
-    /* =========================================================
-       RESPONSE
-    ========================================================= */
 
     return NextResponse.json(
       {
         success: true,
         id,
         data: updateData,
-
-        /*
-         * Useful for debugging.
-         */
-        imageUpdated:
-          typeof updateData.image ===
-          "string",
-
         imageUrl:
+          updateData.imageUrl ||
           updateData.image ||
           null,
       },
@@ -291,11 +296,6 @@ export async function PATCH(
         status: 200,
         headers: {
           ...corsHeaders,
-
-          /*
-           * Prevent browser/proxy caching
-           * of the PATCH response.
-           */
           "Cache-Control":
             "no-store, no-cache, must-revalidate",
         },
@@ -322,23 +322,20 @@ export async function PATCH(
   }
 }
 
-/* =============================================================
-   DELETE PRODUCT
-============================================================= */
+// =============================================================
+// DELETE PRODUCT
+// =============================================================
 
 export async function DELETE(
   _: Request,
   {
     params,
   }: {
-    params: Promise<{
-      id: string;
-    }>;
+    params: Promise<{ id: string }>;
   }
 ) {
   try {
-    const { id } =
-      await params;
+    const { id } = await params;
 
     if (!id) {
       return NextResponse.json(
