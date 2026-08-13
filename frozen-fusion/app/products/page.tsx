@@ -1057,15 +1057,24 @@ export default function ProductsPage() {
     visible: boolean;
   } | null>(null);
 
+  // Start with the built-in product data so the page never shows
+  // a full-screen loading spinner while the API is refreshing.
+  // Cached API data is loaded immediately in the effect below.
+  const initialProducts = CATEGORIES.flatMap(
+    (category) => category.products
+  );
+
   const [
     fetchedProducts,
     setFetchedProducts,
-  ] = useState<Product[]>([]);
+  ] = useState<Product[]>(initialProducts);
 
+  // Products are rendered immediately from fallback/cache.
+  // The API refresh happens silently in the background.
   const [
     loadingProducts,
     setLoadingProducts,
-  ] = useState(true);
+  ] = useState(false);
 
   /* ─────────────────────────────────────────────────────────────
      Load favourites
@@ -1098,7 +1107,8 @@ export default function ProductsPage() {
   useEffect(() => {
     let cancelled = false;
 
-    const CACHE_KEY = "frozenfusion_products_cache";
+    const CACHE_KEY =
+      "frozenfusion_products_cache";
 
     async function loadProducts() {
       const adminUrl =
@@ -1109,11 +1119,11 @@ export default function ProductsPage() {
         : "http://localhost:3001/api/products";
 
       // =========================================================
-      // 1. SHOW LOCAL CACHE IMMEDIATELY
+      // 1. LOAD LOCAL CACHE IMMEDIATELY
       // =========================================================
-
-      let hasCachedProducts = false;
-
+      // This runs on the client after hydration. The page is
+      // already showing fallback products, so there is NO
+      // full-screen loading state while localStorage is read.
       try {
         const cached =
           localStorage.getItem(CACHE_KEY);
@@ -1123,17 +1133,14 @@ export default function ProductsPage() {
 
           if (
             Array.isArray(parsed) &&
-            parsed.length > 0
+            parsed.length > 0 &&
+            !cancelled
           ) {
             console.log(
-              "[PRODUCTS] Showing cached products immediately"
+              "[PRODUCTS] Showing cached products"
             );
 
             setFetchedProducts(parsed);
-
-            setLoadingProducts(false);
-
-            hasCachedProducts = true;
           }
         }
       } catch (error) {
@@ -1144,21 +1151,17 @@ export default function ProductsPage() {
       }
 
       // =========================================================
-      // 2. FETCH FRESH DATA IN BACKGROUND
+      // 2. REFRESH FROM API IN THE BACKGROUND
       // =========================================================
-
       try {
         console.log(
-          "[PRODUCTS] Fetching latest products..."
+          "[PRODUCTS] Refreshing products in background..."
         );
 
-        /*
-         * Date query parameter prevents the browser/proxy
-         * from returning an old /api/products response.
-         *
-         * We are NOT removing caching of product IMAGES.
-         * Cloudinary image optimization remains enabled.
-         */
+        // cache: no-store ensures MongoDB changes are picked up.
+        // The timestamp prevents browser/proxy reuse of an old
+        // /api/products response. This request does NOT block
+        // the initial product rendering.
         const freshUrl =
           `${url}?_=${Date.now()}`;
 
@@ -1175,8 +1178,7 @@ export default function ProductsPage() {
           );
         }
 
-        const json =
-          await res.json();
+        const json = await res.json();
 
         if (
           !json.success ||
@@ -1188,21 +1190,14 @@ export default function ProductsPage() {
         }
 
         // =======================================================
-        // 3. MAP PRODUCTS
+        // 3. MAP FRESH PRODUCTS
         // =======================================================
-
         const mapped: Product[] =
           json.data.map((p: any) => ({
             ...p,
 
-            id:
-              p._id ||
-              p.id,
+            id: p._id || p.id,
 
-            /*
-             * Your MongoDB field is categoryName,
-             * while the existing UI uses category.
-             */
             category:
               p.category ||
               p.categoryName ||
@@ -1214,19 +1209,15 @@ export default function ProductsPage() {
           }));
 
         if (!cancelled) {
-          // =====================================================
-          // 4. UPDATE SCREEN WITH FRESH DATA
-          // =====================================================
-
+          // Replace the cached/fallback data with the latest
+          // MongoDB data. This also changes product.image when
+          // an admin has uploaded a new Cloudinary image.
           setFetchedProducts(mapped);
-
-          setLoadingProducts(false);
         }
 
         // =======================================================
-        // 5. SAVE FRESH DATA TO LOCAL CACHE
+        // 4. SAVE FRESH DATA FOR THE NEXT PAGE LOAD
         // =======================================================
-
         try {
           localStorage.setItem(
             CACHE_KEY,
@@ -1234,7 +1225,7 @@ export default function ProductsPage() {
           );
 
           console.log(
-            "[PRODUCTS] Fresh products saved to local cache"
+            "[PRODUCTS] Fresh products saved to cache"
           );
         } catch (cacheError) {
           console.warn(
@@ -1244,18 +1235,16 @@ export default function ProductsPage() {
         }
       } catch (error) {
         console.error(
-          "[PRODUCTS] Failed to fetch latest products:",
+          "[PRODUCTS] Background refresh failed:",
           error
         );
 
-        /*
-         * If cached products are already displayed,
-         * KEEP THEM on screen.
-         *
-         * This prevents the user from seeing a loading/error
-         * screen just because the API is temporarily slow.
-         */
-        if (!cancelled && !hasCachedProducts) {
+        // Keep whatever is already visible: cached products
+        // or the built-in CATEGORIES fallback.
+      } finally {
+        if (!cancelled) {
+          // Never show the loading spinner during background
+          // refresh. Products are already visible.
           setLoadingProducts(false);
         }
       }

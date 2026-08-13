@@ -282,7 +282,7 @@ const RAW_CATEGORIES = [
   },
   {
     id: "fruit-shaped",
-    name: "Fruit Shaped Ice Cream",
+    name: "Viral Trending Dessert",
     icon: "🍉",
     description: "Fun, fruity, and incredibly delicious — shaped like real fruits!",
     headerColor: "#34D399",
