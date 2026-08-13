@@ -91,17 +91,30 @@ export async function updateProduct(
   id: string,
   data: Partial<ProductDoc>
 ) {
-  const client =
-    await clientPromise;
+  const client = await clientPromise;
 
-  const db =
-    client.db("frozenfusion");
+  const db = client.db("frozenfusion");
 
-  await db
+  console.log("====================================");
+  console.log("[PRODUCTS DB UPDATE] START");
+  console.log("[PRODUCTS DB UPDATE] Product ID:", id);
+  console.log(
+    "[PRODUCTS DB UPDATE] Image:",
+    data.image || "NO IMAGE"
+  );
+
+  const objectId = new ObjectId(id);
+
+  console.log(
+    "[PRODUCTS DB UPDATE] ObjectId:",
+    objectId.toString()
+  );
+
+  const result = await db
     .collection<ProductDoc>("products")
     .updateOne(
       {
-        _id: new ObjectId(id) as unknown as string,
+        _id: objectId as unknown as string,
       },
       {
         $set: {
@@ -110,6 +123,32 @@ export async function updateProduct(
         },
       }
     );
+
+  console.log(
+    "[PRODUCTS DB UPDATE] matchedCount:",
+    result.matchedCount
+  );
+
+  console.log(
+    "[PRODUCTS DB UPDATE] modifiedCount:",
+    result.modifiedCount
+  );
+
+  console.log(
+    "[PRODUCTS DB UPDATE] acknowledged:",
+    result.acknowledged
+  );
+
+  console.log("[PRODUCTS DB UPDATE] END");
+  console.log("====================================");
+
+  if (result.matchedCount === 0) {
+    throw new Error(
+      `Product ${id} was NOT found in MongoDB`
+    );
+  }
+
+  return result;
 }
 
 export async function deleteProduct(
