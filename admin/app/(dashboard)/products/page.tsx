@@ -26,12 +26,12 @@ const CATEGORIES = [
   { id: "kulfi",           name: "Kulfi Varieties",           icon: "🍨" },
   { id: "fruit-shaped",    name: "Viral Trending Dessert",   icon: "🍉" },
   { id: "scoops",          name: "Classic Ice Creams",             icon: "🍦" },
-  { id: "sandwiches",      name: "Ice Cream Sandwich & Slices",       icon: "🍪" },
-  { id: "shakes",          name: "Thick Shakes",               icon: "🥤" },
-  { id: "fusion-drinks",   name: "Fusion Drinks",    icon: "🍹" },
-  { id: "sundaes",         name: "Desserts",                    icon: "🍧" },
   { id: "seasonal",        name: "Premium Ice Cream",           icon: "❄️" },
   { id: "bulk",            name: "Signature Ice Cream",           icon: "🍨" },
+  { id: "sandwiches",      name: "Ice Cream Slices & Sandwich",       icon: "🍪" },
+  { id: "sundaes",         name: "Desserts",                    icon: "🍧" },
+  { id: "shakes",          name: "Fusion Signature Shakes",               icon: "🥤" },
+  { id: "fusion-drinks",   name: "Fusion Drinks",    icon: "🍹" },
 ];
 
 const BADGE_OPTIONS: (Badge | "")[] = ["", "Best Seller", "New", "Limited", "Popular"];

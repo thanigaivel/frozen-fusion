@@ -390,185 +390,6 @@ const RAW_CATEGORIES = [
     ],
   },
   {
-    id: "sandwiches",
-    name: "Ice Cream Sandwich & Slices",
-    icon: "🍪",
-    description: "Decadent ice cream sandwiched between premium cookies or cut into perfect slices.",
-    headerColor: "#A78BFA",
-    products: [
-      {
-        id: "6a79ca7b50a038a1e54aa52f",
-        name: "Roasted Almond Caramel Pineapple Slices",
-        categoryId: "sandwiches",
-        description: "Juicy pineapple slices topped with rich caramel and crunchy roasted almonds, creating a delicious blend of sweet, tangy, nutty, and caramelised flavours. A refreshing yet indulgent frozen treat in every bite.",
-        badge: "Best Seller",
-        rating: 4.9,
-        image: "",
-        tags: [],
-        visible: true,
-        // computed properties
-        ...fc("roasted almond caramel pineapple slices")
-      },
-      {
-        id: "6a79853483d89583aa19b945",
-        name: "Oreo Ice Cream Sandwich",
-        categoryId: "sandwiches",
-        description: "Rich and creamy cookies-and-cream ice cream packed with crunchy Oreo cookie pieces, perfectly sandwiched between two delicious chocolatey Oreo-style biscuits. Every bite brings together smooth creaminess, deep chocolate flavour, and the satisfying crunch of cookies.",
-        badge: "Best Seller",
-        rating: 4.9,
-        image: "/products/Ice Cream Sandwiches/1786348851739-IMG_2110.PNG",
-        tags: ["Premium"],
-        visible: true,
-        // computed properties
-        ...fc("oreo ice cream sandwich")
-      },
-      {
-        id: "6a79848a83d89583aa19b944",
-        name: "Lotus Biscoff Ice Cream Sandwich",
-        categoryId: "sandwiches",
-        description: "Creamy Biscoff ice cream with crunchy caramelised biscuit pieces, sandwiched between two delicious Biscoff biscuits. A perfect harmony of creamy indulgence and irresistible crunch.",
-        badge: "Best Seller",
-        rating: 4.9,
-        image: "/products/Ice Cream Sandwiches/1786348682940-IMG_2111.PNG",
-        tags: ["Signature"],
-        visible: true,
-        // computed properties
-        ...fc("lotus biscoff ice cream sandwich")
-      }
-    ],
-  },
-  {
-    id: "shakes",
-    name: "Thick Shakes",
-    icon: "🥤",
-    description: "Thick, creamy, and loaded with your favourite flavours.",
-    headerColor: "#F87171",
-    products: [
-      {
-        id: "6a79cb9d50a038a1e54aa536",
-        name: "Lotus Biscoff Shakes",
-        categoryId: "shakes",
-        description: "A rich and creamy shake blended with the irresistible caramelised flavour of Lotus Biscoff biscuits. Smooth, indulgent, and delightfully crunchy—a perfect treat for every Biscoff lover.",
-        badge: "Best Seller",
-        rating: 4.9,
-        image: "",
-        tags: ["Signature"],
-        visible: true,
-        // computed properties
-        ...fc("lotus biscoff shakes")
-      },
-      {
-        id: "6a79cb9150a038a1e54aa535",
-        name: "Chocolate Fantasy Shake",
-        categoryId: "shakes",
-        description: "A rich, creamy, and indulgent chocolate shake crafted for true chocolate lovers. Smooth, thick, and loaded with irresistible chocolate goodness in every sip.",
-        badge: "Limited",
-        rating: 4.9,
-        image: "",
-        tags: [],
-        visible: true,
-        // computed properties
-        ...fc("chocolate fantasy shake")
-      },
-      {
-        id: "6a79cb7d50a038a1e54aa534",
-        name: "Oreo Shake",
-        categoryId: "shakes",
-        description: "A thick and creamy shake blended with the classic taste of Oreo cookies and rich vanilla goodness. Smooth, crunchy, and irresistibly indulgent—a delicious treat in every sip.",
-        badge: "Popular",
-        rating: 4.5,
-        image: "",
-        tags: [],
-        visible: true,
-        // computed properties
-        ...fc("oreo shake")
-      }
-    ],
-  },
-  {
-    id: "fusion-drinks",
-    name: "Fusion Drinks",
-    icon: "🍹",
-    description: "Refreshing, exotic mocktails and fusion beverages.",
-    headerColor: "#38BDF8",
-    products: [
-      {
-        id: "6a79cc0750a038a1e54aa53b",
-        name: "Blue Moon Mojito",
-        categoryId: "fusion-drinks",
-        description: "Blue Moon Mojito",
-        badge: null,
-        rating: 4.5,
-        image: "",
-        tags: [],
-        visible: true,
-        // computed properties
-        ...fc("blue moon mojito")
-      },
-      {
-        id: "6a79cbf650a038a1e54aa53a",
-        name: "Electric Fizz Mojito",
-        categoryId: "fusion-drinks",
-        description: "Electric Fizz Mojito",
-        badge: null,
-        rating: 4.5,
-        image: "",
-        tags: [],
-        visible: true,
-        // computed properties
-        ...fc("electric fizz mojito")
-      },
-      {
-        id: "6a79cbe450a038a1e54aa539",
-        name: "Mint Mojito",
-        categoryId: "fusion-drinks",
-        description: "Mint Mojito",
-        badge: null,
-        rating: 4.5,
-        image: "",
-        tags: [],
-        visible: true,
-        // computed properties
-        ...fc("mint mojito")
-      }
-    ],
-  },
-  {
-    id: "sundaes",
-    name: "Desserts",
-    icon: "🍧",
-    description: "Over-the-top sundaes loaded with toppings and pure joy.",
-    headerColor: "#FBBF24",
-    products: [
-      {
-        id: "6a79cbcb50a038a1e54aa538",
-        name: "Falooda",
-        categoryId: "sundaes",
-        description: "Falooda",
-        badge: null,
-        rating: 4.5,
-        image: "",
-        tags: [],
-        visible: true,
-        // computed properties
-        ...fc("falooda")
-      },
-      {
-        id: "6a79cbaf50a038a1e54aa537",
-        name: "Chocolate Kalakki",
-        categoryId: "sundaes",
-        description: "Chocolate Kalakki",
-        badge: null,
-        rating: 4.9,
-        image: "",
-        tags: [],
-        visible: true,
-        // computed properties
-        ...fc("chocolate kalakki")
-      }
-    ],
-  },
-  {
     id: "seasonal",
     name: "Premium Ice Cream",
     icon: "❄️",
@@ -766,7 +587,186 @@ const RAW_CATEGORIES = [
         // computed properties
         ...fc("blueberry cheesecake")
       }
+    ],  },
+  {
+    id: "sandwiches",
+    name: "Ice Cream Slices & Sandwich",
+    icon: "🍪",
+    description: "Decadent ice cream sandwiched between premium cookies or cut into perfect slices.",
+    headerColor: "#A78BFA",
+    products: [
+      {
+        id: "6a79ca7b50a038a1e54aa52f",
+        name: "Roasted Almond Caramel Pineapple Slices",
+        categoryId: "sandwiches",
+        description: "Juicy pineapple slices topped with rich caramel and crunchy roasted almonds, creating a delicious blend of sweet, tangy, nutty, and caramelised flavours. A refreshing yet indulgent frozen treat in every bite.",
+        badge: "Best Seller",
+        rating: 4.9,
+        image: "",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("roasted almond caramel pineapple slices")
+      },
+      {
+        id: "6a79853483d89583aa19b945",
+        name: "Oreo Ice Cream Sandwich",
+        categoryId: "sandwiches",
+        description: "Rich and creamy cookies-and-cream ice cream packed with crunchy Oreo cookie pieces, perfectly sandwiched between two delicious chocolatey Oreo-style biscuits. Every bite brings together smooth creaminess, deep chocolate flavour, and the satisfying crunch of cookies.",
+        badge: "Best Seller",
+        rating: 4.9,
+        image: "/products/Ice Cream Sandwiches/1786348851739-IMG_2110.PNG",
+        tags: ["Premium"],
+        visible: true,
+        // computed properties
+        ...fc("oreo ice cream sandwich")
+      },
+      {
+        id: "6a79848a83d89583aa19b944",
+        name: "Lotus Biscoff Ice Cream Sandwich",
+        categoryId: "sandwiches",
+        description: "Creamy Biscoff ice cream with crunchy caramelised biscuit pieces, sandwiched between two delicious Biscoff biscuits. A perfect harmony of creamy indulgence and irresistible crunch.",
+        badge: "Best Seller",
+        rating: 4.9,
+        image: "/products/Ice Cream Sandwiches/1786348682940-IMG_2111.PNG",
+        tags: ["Signature"],
+        visible: true,
+        // computed properties
+        ...fc("lotus biscoff ice cream sandwich")
+      }
     ],
+  },
+  {
+    id: "sundaes",
+    name: "Desserts",
+    icon: "🍧",
+    description: "Over-the-top sundaes loaded with toppings and pure joy.",
+    headerColor: "#FBBF24",
+    products: [
+      {
+        id: "6a79cbcb50a038a1e54aa538",
+        name: "Falooda",
+        categoryId: "sundaes",
+        description: "Falooda",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("falooda")
+      },
+      {
+        id: "6a79cbaf50a038a1e54aa537",
+        name: "Chocolate Kalakki",
+        categoryId: "sundaes",
+        description: "Chocolate Kalakki",
+        badge: null,
+        rating: 4.9,
+        image: "",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("chocolate kalakki")
+      }
+    ],
+  },
+  {
+    id: "shakes",
+    name: "Fusion Signature Shakes",
+    icon: "🥤",
+    description: "Thick, creamy, and loaded with your favourite flavours.",
+    headerColor: "#F87171",
+    products: [
+      {
+        id: "6a79cb9d50a038a1e54aa536",
+        name: "Lotus Biscoff Shakes",
+        categoryId: "shakes",
+        description: "A rich and creamy shake blended with the irresistible caramelised flavour of Lotus Biscoff biscuits. Smooth, indulgent, and delightfully crunchy—a perfect treat for every Biscoff lover.",
+        badge: "Best Seller",
+        rating: 4.9,
+        image: "",
+        tags: ["Signature"],
+        visible: true,
+        // computed properties
+        ...fc("lotus biscoff shakes")
+      },
+      {
+        id: "6a79cb9150a038a1e54aa535",
+        name: "Chocolate Fantasy Shake",
+        categoryId: "shakes",
+        description: "A rich, creamy, and indulgent chocolate shake crafted for true chocolate lovers. Smooth, thick, and loaded with irresistible chocolate goodness in every sip.",
+        badge: "Limited",
+        rating: 4.9,
+        image: "",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("chocolate fantasy shake")
+      },
+      {
+        id: "6a79cb7d50a038a1e54aa534",
+        name: "Oreo Shake",
+        categoryId: "shakes",
+        description: "A thick and creamy shake blended with the classic taste of Oreo cookies and rich vanilla goodness. Smooth, crunchy, and irresistibly indulgent—a delicious treat in every sip.",
+        badge: "Popular",
+        rating: 4.5,
+        image: "",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("oreo shake")
+      }
+    ],
+  },
+  {
+    id: "fusion-drinks",
+    name: "Fusion Drinks",
+    icon: "🍹",
+    description: "Refreshing, exotic mocktails and fusion beverages.",
+    headerColor: "#38BDF8",
+    products: [
+      {
+        id: "6a79cc0750a038a1e54aa53b",
+        name: "Blue Moon Mojito",
+        categoryId: "fusion-drinks",
+        description: "Blue Moon Mojito",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("blue moon mojito")
+      },
+      {
+        id: "6a79cbf650a038a1e54aa53a",
+        name: "Electric Fizz Mojito",
+        categoryId: "fusion-drinks",
+        description: "Electric Fizz Mojito",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("electric fizz mojito")
+      },
+      {
+        id: "6a79cbe450a038a1e54aa539",
+        name: "Mint Mojito",
+        categoryId: "fusion-drinks",
+        description: "Mint Mojito",
+        badge: null,
+        rating: 4.5,
+        image: "",
+        tags: [],
+        visible: true,
+        // computed properties
+        ...fc("mint mojito")
+      }
+    ],
+
   }
 ];
 
