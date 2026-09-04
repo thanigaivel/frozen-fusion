@@ -342,7 +342,7 @@ export default function ContactPage() {
               <div className="space-y-3 font-inter text-sm">
                 <div className="flex justify-between py-2 border-b border-white/10">
                   <span className="text-white/60">Monday – Sunday</span>
-                  <span className="text-white font-semibold">11:00 AM – 11:30 PM</span>
+                  <span className="text-white font-semibold">10:00 AM – 11:30 PM</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-white/10">
                   <span className="text-white/60">Weekend Special</span>

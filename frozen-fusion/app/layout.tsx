@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { CinematicBackground } from "@/components/CinematicBackground";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { FloatingSocialIcons } from "@/components/FloatingSocialIcons";
 
 const poppins = Poppins({ weight: ["300", "400", "500", "600", "700"], subsets: ["latin"], variable: "--font-poppins", display: "swap" });
 const bungee = Bungee({ weight: "400", subsets: ["latin"], variable: "--font-bungee", display: "swap" });
@@ -50,6 +51,7 @@ export default function RootLayout({
           <CinematicBackground />
           {children}
           <WhatsAppButton />
+          <FloatingSocialIcons />
         </SmoothScroll>
       </body>
     </html>
