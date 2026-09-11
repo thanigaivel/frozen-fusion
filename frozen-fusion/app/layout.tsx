@@ -1,3 +1,4 @@
+import Script from "next/script";
 import { Bungee, Poppins, Righteous } from "next/font/google";
 
 import "./globals.css";
@@ -46,6 +47,21 @@ export default function RootLayout({
         righteous.variable
       )}
     >
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-5VWEJL23YY"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-5VWEJL23YY');
+          `}
+        </Script>
+      </head>
       <body className="font-poppins bg-[#0A0A0D] text-white" suppressHydrationWarning>
         <SmoothScroll>
           <CinematicBackground />

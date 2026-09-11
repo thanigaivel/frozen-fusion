@@ -1110,7 +1110,7 @@ export default function ProductsPage() {
         );
       }
     } catch (error) {
-      console.error(
+      console.warn(
         "Failed to load favourites",
         error
       );
@@ -1251,7 +1251,7 @@ export default function ProductsPage() {
           );
         }
       } catch (error) {
-        console.error(
+        console.warn(
           "[PRODUCTS] Background refresh failed:",
           error
         );
