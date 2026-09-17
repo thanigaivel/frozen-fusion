@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Script from "next/script";
 import { Bungee, Poppins, Righteous } from "next/font/google";
 
@@ -12,9 +13,12 @@ const poppins = Poppins({ weight: ["300", "400", "500", "600", "700"], subsets: 
 const bungee = Bungee({ weight: "400", subsets: ["latin"], variable: "--font-bungee", display: "swap" });
 const righteous = Righteous({ weight: "400", subsets: ["latin"], variable: "--font-righteous", display: "swap" });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Frozen Fusion | Tuticorin's First Premium Dessert Brand",
   description: "Crafting the Finest Frozen Experiences. A luxury futuristic dessert lounge.",
+  verification: {
+    google: "6j8njVdpEy2q81DIBcDXXLMvlH9pRuWroI5xV3ITMhE",
+  },
 
   openGraph: {
     title: "Frozen Fusion | Premium Dessert Brand",
