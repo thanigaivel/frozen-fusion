@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
 import clientPromise from "@/lib/mongodb";
 import { getPartnerships } from "@/lib/partnership-db";
 
@@ -16,6 +15,99 @@ export async function GET() {
       "Access-Control-Allow-Headers": "Content-Type",
     }
   });
+}
+
+async function sendPartnershipEmail(
+  name: string,
+  contact: string,
+  address: string,
+  description: string,
+  selectedType: string
+) {
+  try {
+    if (!process.env.RESEND_API_KEY) {
+      console.warn("[PARTNERSHIP API] RESEND_API_KEY not configured. Skipping email dispatch.");
+      return { success: false, error: "RESEND_API_KEY not configured" };
+    }
+
+    const formattedDate = new Date().toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
+
+    const htmlContent = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0b0c10; color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #232733;">
+        <div style="background: linear-gradient(135deg, #1f1b2e 0%, #11131a 100%); padding: 32px 24px; text-align: center; border-bottom: 2px solid #FF6BD6;">
+          <h1 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 1px; color: #ffffff; text-transform: uppercase;">
+            Frozen <span style="color: #FF6BD6;">Fusion</span>
+          </h1>
+          <p style="margin: 8px 0 0; font-size: 13px; color: #9ca3af; letter-spacing: 0.5px;">
+            New Partnership Inquiry
+          </p>
+        </div>
+
+        <div style="padding: 28px 24px;">
+          <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 8px 0; color: #9ca3af; font-size: 13px; width: 130px; vertical-align: top;">Partnership Type</td>
+                <td style="padding: 8px 0; color: #FF6BD6; font-size: 14px; font-weight: 600;">${selectedType}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #9ca3af; font-size: 13px; vertical-align: top;">Name</td>
+                <td style="padding: 8px 0; color: #ffffff; font-size: 14px; font-weight: 600;">${name}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #9ca3af; font-size: 13px; vertical-align: top;">Contact Number</td>
+                <td style="padding: 8px 0; font-size: 14px; color: #60A5FA; font-weight: 500;">${contact}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #9ca3af; font-size: 13px; vertical-align: top;">Address</td>
+                <td style="padding: 8px 0; color: #e5e7eb; font-size: 14px;">${address}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #9ca3af; font-size: 13px; vertical-align: top;">Received</td>
+                <td style="padding: 8px 0; color: #9ca3af; font-size: 13px;">${formattedDate}</td>
+              </tr>
+            </table>
+          </div>
+
+          <div style="margin-bottom: 24px;">
+            <h3 style="margin: 0 0 10px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af;">Description & Details</h3>
+            <div style="background: rgba(255, 255, 255, 0.03); border-left: 3px solid #FF6BD6; border-radius: 4px; padding: 16px; color: #e5e7eb; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${description}</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: "Frozen Fusion Partnership <contact@frozenfusion.in>", // Using the verified domain
+        to: "support@frozenfusion.in",
+        subject: `[Partnership] ${selectedType} - ${name}`,
+        html: htmlContent,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error("[PARTNERSHIP API EMAIL ERROR] Resend failed:", data);
+      return { success: false, error: data };
+    }
+
+    console.log(`[PARTNERSHIP API] Email sent to support@frozenfusion.in for ${name} via Resend. ID: ${data.id}`);
+    return { success: true, data };
+  } catch (emailErr: any) {
+    console.error("[PARTNERSHIP API EMAIL ERROR]", emailErr);
+    return { success: false, error: emailErr.message || String(emailErr) };
+  }
 }
 
 export async function POST(request: Request) {
@@ -44,79 +136,15 @@ export async function POST(request: Request) {
       createdAt: new Date(),
     });
 
-    // Configure the SMTP transporter for Titan Mail (GoDaddy)
-    // For this to work, the user needs to set SMTP_USER and SMTP_PASS in .env.local
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.titan.email",
-      port: Number(process.env.SMTP_PORT) || 465,
-      secure: process.env.SMTP_PORT === "587" ? false : true, // true for 465 (SSL), false for 587 (TLS)
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-
-    // Email content
-    const mailOptions = {
-      from: `"Frozen Fusion Partnership" <${process.env.SMTP_USER || "noreply@frozenfusion.in"}>`,
-      to: "support@frozenfusion.in", // The destination email requested by the user
-      subject: `New Partnership Inquiry: ${selectedType} - ${name}`,
-      text: `
-New Partnership Inquiry Details:
-
-Type: ${selectedType}
-Name: ${name}
-Contact Number: ${contact}
-Address: ${address}
-
-Description / Additional Details:
-${description}
-      `,
-      html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; line-height: 1.6;">
-          <h2 style="color: #e12d6a;">New Partnership Inquiry</h2>
-          <table style="width: 100%; max-width: 600px; border-collapse: collapse; margin-top: 15px;">
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; width: 30%;">Partnership Type</td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${selectedType}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Name</td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${name}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Contact Number</td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${contact}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Address</td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${address}</td>
-            </tr>
-          </table>
-          <h3 style="margin-top: 20px; color: #555;">Description & Details:</h3>
-          <p style="padding: 15px; background-color: #f9f9f9; border-left: 4px solid #e12d6a; white-space: pre-wrap;">${description}</p>
-        </div>
-      `,
-    };
-
-    // Attempt to send email, but gracefully handle missing credentials during dev
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      console.warn("SMTP credentials not configured. Email would have been sent to support@frozenfusion.in");
-      
-      // We still return success to the frontend for development purposes
-      return NextResponse.json(
-        { success: true, message: "Inquiry received and saved to DB (Email mocked due to missing SMTP credentials)." },
-        { 
-          status: 200,
-          headers: { "Access-Control-Allow-Origin": "*" } 
-        }
-      );
-    }
-
-    await transporter.sendMail(mailOptions);
+    // Send email via Resend API
+    const emailResult = await sendPartnershipEmail(name, contact, address, description, selectedType);
 
     return NextResponse.json(
-      { success: true, message: "Inquiry saved to DB and sent successfully to support@frozenfusion.in." },
+      { 
+        success: true, 
+        message: "Inquiry saved to DB and sent successfully.",
+        emailStatus: emailResult
+      },
       { 
         status: 200,
         headers: { "Access-Control-Allow-Origin": "*" } 
