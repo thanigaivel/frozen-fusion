@@ -20,7 +20,8 @@ async function sendContactEmail(
     const nodemailer = (await import("nodemailer")).default;
     const dns = await import("dns");
 
-    const port = Number(process.env.SMTP_PORT) || 587;
+    // Override port to 465 (SMTPS) to bypass Render's outbound firewall which blocks port 587
+    const port = 465;
     const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
     
     // Explicitly resolve IPv4 to prevent IPv6 ENETUNREACH errors on Render
@@ -29,7 +30,7 @@ async function sendContactEmail(
     const transporter = nodemailer.createTransport({
       host: resolvedIpv4,
       port: port,
-      secure: process.env.SMTP_SECURE === "true" || port === 465,
+      secure: true, // Port 465 requires secure: true
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
