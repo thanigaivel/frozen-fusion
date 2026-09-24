@@ -28,6 +28,7 @@ async function sendContactEmail(
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      family: 4, // Force IPv4. Resolves ENETUNREACH errors on Render
       connectionTimeout: 10000, // 10 seconds timeout
       greetingTimeout: 10000,
       socketTimeout: 10000,
