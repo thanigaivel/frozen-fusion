@@ -18,17 +18,26 @@ async function sendContactEmail(
 
     // Dynamic import prevents module-level bundling/import errors on some environments
     const nodemailer = (await import("nodemailer")).default;
+    const dns = await import("dns");
 
     const port = Number(process.env.SMTP_PORT) || 587;
+    const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
+    
+    // Explicitly resolve IPv4 to prevent IPv6 ENETUNREACH errors on Render
+    const { address: resolvedIpv4 } = await dns.promises.lookup(smtpHost, { family: 4 });
+
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      host: resolvedIpv4,
       port: port,
       secure: process.env.SMTP_SECURE === "true" || port === 465,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-      family: 4, // Force IPv4. Resolves ENETUNREACH errors on Render
+      tls: {
+        // Must provide servername when connecting via IP address for TLS/SNI
+        servername: smtpHost
+      },
       connectionTimeout: 10000, // 10 seconds timeout
       greetingTimeout: 10000,
       socketTimeout: 10000,
