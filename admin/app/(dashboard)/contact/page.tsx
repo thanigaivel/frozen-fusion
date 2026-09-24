@@ -26,6 +26,7 @@ export default async function ContactAdminPage() {
             <thead>
               <tr className="bg-gray-800/50 border-b border-gray-800 text-gray-400 text-xs uppercase tracking-wider">
                 <th className="px-6 py-4 font-semibold">Sender</th>
+                <th className="px-6 py-4 font-semibold">Subject</th>
                 <th className="px-6 py-4 font-semibold">Message</th>
                 <th className="px-6 py-4 font-semibold text-right">Received Date</th>
               </tr>
@@ -33,7 +34,7 @@ export default async function ContactAdminPage() {
             <tbody className="divide-y divide-gray-800 text-sm">
               {messages.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={4} className="px-6 py-12 text-center text-gray-500">
                     No messages found.
                   </td>
                 </tr>
@@ -47,6 +48,11 @@ export default async function ContactAdminPage() {
                           {msg.email}
                         </a>
                       </div>
+                    </td>
+                    <td className="px-6 py-4 align-top whitespace-nowrap">
+                      <span className="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-pink-500/10 text-pink-400 border border-pink-500/20">
+                        {msg.subject || "General Inquiry"}
+                      </span>
                     </td>
                     <td className="px-6 py-4 align-top w-full max-w-xl">
                       <p className="text-gray-300 whitespace-pre-wrap">{msg.message}</p>
