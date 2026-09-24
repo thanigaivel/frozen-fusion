@@ -13,7 +13,7 @@ async function sendContactEmail(
   try {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
       console.warn("[CONTACT API] SMTP credentials not configured. Skipping email dispatch.");
-      return;
+      return { success: false, error: "SMTP credentials not configured" };
     }
 
     // Dynamic import prevents module-level bundling/import errors on some environments
@@ -28,6 +28,9 @@ async function sendContactEmail(
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      connectionTimeout: 10000, // 10 seconds timeout
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
     });
 
     const formattedDate = new Date().toLocaleString("en-IN", {
@@ -96,9 +99,11 @@ async function sendContactEmail(
     });
 
     console.log(`[CONTACT API] Email sent to support@frozenfusion.in for ${name} (${email})`);
-  } catch (emailErr) {
+    return { success: true };
+  } catch (emailErr: any) {
     // Email errors MUST NEVER crash the API — always log and continue
     console.error("[CONTACT API EMAIL ERROR]", emailErr);
+    return { success: false, error: emailErr.message || String(emailErr) };
   }
 }
 
@@ -128,10 +133,10 @@ export async function POST(request: Request) {
     });
 
     // 2. Send email (await it so serverless function doesn't kill the process early)
-    await sendContactEmail(name, email, subject || "General Inquiry", message);
+    const emailResult = await sendContactEmail(name, email, subject || "General Inquiry", message);
 
     return NextResponse.json(
-      { success: true, message: "Message sent successfully.", id: result.insertedId },
+      { success: true, message: "Message sent successfully.", id: result.insertedId, emailStatus: emailResult },
       { status: 201 }
     );
   } catch (error) {
