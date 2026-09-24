@@ -78,7 +78,7 @@ async function sendContactEmail(
         Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "Frozen Fusion Contact <onboarding@resend.dev>", 
+        from: "Frozen Fusion Contact <contact@frozenfusion.in>", // Using the verified domain
         to: "support@frozenfusion.in",
         reply_to: email,
         subject: `[Contact Form] ${subject} - ${name}`,
