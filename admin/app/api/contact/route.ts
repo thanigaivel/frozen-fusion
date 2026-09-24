@@ -29,7 +29,7 @@ async function sendContactEmail(
             Frozen <span style="color: #FF6BD6;">Fusion</span>
           </h1>
           <p style="margin: 8px 0 0; font-size: 13px; color: #9ca3af; letter-spacing: 0.5px;">
-            New Website Contact Inquiry
+            New Contact Inquiry
           </p>
         </div>
 
