@@ -127,8 +127,8 @@ export async function POST(request: Request) {
       submittedAt: new Date(),
     });
 
-    // 2. Fire-and-forget — email never blocks or fails the HTTP response
-    void sendContactEmail(name, email, subject || "General Inquiry", message);
+    // 2. Send email (await it so serverless function doesn't kill the process early)
+    await sendContactEmail(name, email, subject || "General Inquiry", message);
 
     return NextResponse.json(
       { success: true, message: "Message sent successfully.", id: result.insertedId },
